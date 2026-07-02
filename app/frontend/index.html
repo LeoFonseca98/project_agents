@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agente de Obras</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-light: #dbeafe;
+      --blue-xlight: #eff6ff;
+      --teal: #0891b2;
+      --teal-light: #cffafe;
+      --teal-xlight: #ecfeff;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --green-dark: #15803d;
+      --red: #dc2626;
+      --radius-sm: 8px;
+      --radius: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
+      --shadow: 0 4px 24px rgba(15,23,42,0.08);
+      --shadow-lg: 0 8px 40px rgba(15,23,42,0.12);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* LAYOUT */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      grid-template-rows: 100vh;
+      gap: 0;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        height: auto;
+      }
+    }
+
+    /* CHAT PANEL */
+    .chat-panel {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .chat-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .chat-header-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--blue), var(--teal));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .chat-header-info h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .chat-header-info p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      margin-left: auto;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 2px #dcfce7;
+    }
+
+    /* MESSAGES */
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-track { background: transparent; }
+    .messages::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+
+    /* BUBBLES */
+    .bubble {
+      max-width: 85%;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .bubble.user { align-self: flex-end; align-items: flex-end; }
+    .bubble.ai { align-self: flex-start; align-items: flex-start; }
+
+    .bubble-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0 4px;
+    }
+
+    .bubble-content {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      line-height: 1.6;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .bubble.user .bubble-content {
+      background: var(--text);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bubble.ai .bubble-content {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .bubble.ai .bubble-content.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: var(--red);
+    }
+
+    /* CARDS CONTAINER */
+    .cards-container {
+      align-self: flex-start;
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cards-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0 4px;
+      margin-bottom: 2px;
+    }
+
+    /* SERVICE CARD */
+    .service-card {
+      background: var(--teal-xlight);
+      border: 1px solid var(--teal-light);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--teal);
+      border-radius: 3px 0 0 3px;
+    }
+
+    .service-card:hover {
+      background: #a5f3fc;
+      border-color: var(--teal);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(8,145,178,0.15);
+    }
+
+    .service-card .card-number {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .service-card .card-title {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: #0e7490;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .service-card .supplies-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+
+    .supplies-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .supply-tag {
+      background: white;
+      border: 1px solid var(--teal-light);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      color: #0e7490;
+      line-height: 1.5;
+    }
+
+    .no-supplies {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      font-style: italic;
+    }
+
+    /* PRODUCT CARD */
+    .product-card {
+      background: var(--blue-xlight);
+      border: 1px solid var(--blue-light);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--blue);
+      border-radius: 3px 0 0 3px;
+    }
+
+    .product-card:hover {
+      background: #bfdbfe;
+      border-color: var(--blue);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.15);
+    }
+
+    .product-card .card-number {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .product-card .card-title {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: #1e40af;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+
+    .product-card .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .meta-tag {
+      background: white;
+      border: 1px solid var(--blue-light);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      color: #1e40af;
+    }
+
+    /* CARD SELECTED STATE */
+    .card-selected {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .card-selected-highlight {
+      pointer-events: none;
+      opacity: 1 !important;
+      border-color: var(--green) !important;
+      background: var(--green-light) !important;
+    }
+
+    /* COMPOSER */
+    .composer {
+      border-top: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-shrink: 0;
+      background: var(--surface);
+    }
+
+    .composer textarea {
+      flex: 1;
+      min-height: 64px;
+      max-height: 160px;
+      resize: none;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--surface-2);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .composer textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .composer textarea::placeholder { color: var(--text-light); }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--blue);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .send-btn:hover:not(:disabled) { background: var(--blue-dark); transform: scale(1.05); }
+    .send-btn:disabled { background: var(--border-strong); cursor: not-allowed; }
+
+    .send-btn svg { width: 18px; height: 18px; }
+
+    .status-bar {
+      padding: 8px 20px 12px;
+      font-size: 0.78rem;
+      color: var(--text-light);
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .sidebar-panel {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header h2 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .item-count {
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
+    .selected-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .selected-list::-webkit-scrollbar { width: 3px; }
+    .selected-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+      gap: 8px;
+      color: var(--text-light);
+    }
+
+    .empty-state span { font-size: 28px; }
+    .empty-state p { font-size: 0.82rem; text-align: center; line-height: 1.5; }
+
+    .selected-item {
+      background: var(--green-light);
+      border: 1px solid #86efac;
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      position: relative;
+    }
+
+    .selected-item .item-type {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--green-dark);
+      margin-bottom: 2px;
+    }
+
+    .selected-item .item-desc {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #14532d;
+      line-height: 1.4;
+    }
+
+    .selected-item .item-meta {
+      font-size: 0.75rem;
+      color: #166534;
+      margin-top: 3px;
+    }
+
+    /* EXPORT BUTTON */
+    .export-btn {
+      margin: 0 12px 12px;
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--green);
+      color: white;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .export-btn:hover:not(:disabled) { background: var(--green-dark); }
+    .export-btn:disabled { background: var(--border-strong); color: var(--text-light); cursor: not-allowed; }
+
+    /* TYPING INDICATOR */
+    .typing {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      border-bottom-left-radius: 4px;
+      width: fit-content;
+    }
+
+    .typing span {
+      width: 6px;
+      height: 6px;
+      background: var(--text-light);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- CHAT PANEL -->
+  <div class="chat-panel">
+    <div class="chat-header">
+      <div class="chat-header-icon">🏗️</div>
+      <div class="chat-header-info">
+        <h1>Agente de Obras</h1>
+        <p>Monte listas de materiais com inteligência artificial</p>
+      </div>
+      <div class="status-dot" id="status-dot"></div>
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="composer">
+      <textarea
+        id="user-input"
+        placeholder="Descreva os serviços da obra ou responda o agente..."
+        rows="2"
+      ></textarea>
+      <button class="send-btn" id="send-btn" title="Enviar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+
+    <div class="status-bar" id="status-bar">Pronto. Descreva os serviços para começar.</div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-panel" style="flex: 1; min-height: 0;">
+      <div class="sidebar-header">
+        <h2>
+          📋 Lista de Materiais
+          <span class="item-count" id="item-count">0</span>
+        </h2>
+      </div>
+      <div class="selected-list" id="selected-list">
+        <div class="empty-state">
+          <span>📦</span>
+          <p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p>
+        </div>
+      </div>
+      <button class="export-btn" id="export-btn" disabled>
+        ⬇️ Exportar Lista (.txt)
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const messagesEl = document.getElementById('messages');
+  const inputEl = document.getElementById('user-input');
+  const sendBtn = document.getElementById('send-btn');
+  const statusBar = document.getElementById('status-bar');
+  const selectedListEl = document.getElementById('selected-list');
+  const itemCount = document.getElementById('item-count');
+  const exportBtn = document.getElementById('export-btn');
+
+  let context = null;
+  let selectedItems = [];
+  let typingEl = null;
+
+  // ─── UTILITIES ───────────────────────────────────────────────
+
+  function setStatus(text) {
+    statusBar.textContent = text;
+  }
+
+  function scrollToBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function showTyping() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'bubble ai';
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    wrapper.appendChild(typing);
+    messagesEl.appendChild(wrapper);
+    typingEl = wrapper;
+    scrollToBottom();
+  }
+
+  function hideTyping() {
+    if (typingEl) { typingEl.remove(); typingEl = null; }
+  }
+
+  // ─── RENDER HELPERS ──────────────────────────────────────────
+
+  function addBubble(text, role, label, isError = false) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `bubble ${role}`;
+
+    if (label) {
+      const lbl = document.createElement('div');
+      lbl.className = 'bubble-label';
+      lbl.textContent = label;
+      wrapper.appendChild(lbl);
+    }
+
+    const content = document.createElement('div');
+    content.className = 'bubble-content' + (isError ? ' error' : '');
+    content.textContent = text;
+    wrapper.appendChild(content);
+
+    messagesEl.appendChild(wrapper);
+    scrollToBottom();
+    return wrapper;
+  }
+
+  function addServiceCards(services, message) {
+    if (message) addBubble(message, 'ai', 'IA');
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'cards-container';
+
+    const label = document.createElement('div');
+    label.className = 'cards-label';
+    label.textContent = 'IA — Selecione o serviço';
+    wrapper.appendChild(label);
+
+    services.forEach((service, idx) => {
+      const card = document.createElement('div');
+      card.className = 'service-card';
+
+      const num = document.createElement('div');
+      num.className = 'card-number';
+      num.textContent = `Opção ${idx + 1}`;
+
+      const title = document.createElement('div');
+      title.className = 'card-title';
+      title.textContent = service.description;
+
+      card.appendChild(num);
+      card.appendChild(title);
+
+      if (service.supplies && service.supplies.length > 0) {
+        const supLabel = document.createElement('div');
+        supLabel.className = 'supplies-label';
+        supLabel.textContent = `Composição (${service.supplies.length} insumos)`;
+
+        const tags = document.createElement('div');
+        tags.className = 'supplies-tags';
+
+        service.supplies.slice(0, 8).forEach(sup => {
+          const tag = document.createElement('span');
+          tag.className = 'supply-tag';
+          tag.textContent = sup;
+          tags.appendChild(tag);
+        });
+
+        if (service.supplies.length > 8) {
+          const more = document.createElement('span');
+          more.className = 'supply-tag';
+          more.textContent = `+${service.supplies.length - 8} mais`;
+          tags.appendChild(more);
+        }
+
+        card.appendChild(supLabel);
+        card.appendChild(tags);
+      } else {
+        const noSup = document.createElement('div');
+        noSup.className = 'no-supplies';
+        noSup.textContent = 'Sem composição cadastrada';
+        card.appendChild(noSup);
+      }
+
+      card.addEventListener('click', () => {
+        // Visual feedback
+        wrapper.querySelectorAll('.service-card').forEach(c => c.classList.add('card-selected'));
+        card.classList.remove('card-selected');
+        card.classList.add('card-selected-highlight');
+
+        addBubble(`✅ Serviço selecionado: ${service.description}`, 'user', 'Engenheiro');
+        sendMessage(String(idx + 1), true);
+      });
+
+      wrapper.appendChild(card);
+    });
+
+    messagesEl.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  function addProductCards(products, message) {
+    if (message) addBubble(message, 'ai', 'IA');
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'cards-container';
+
+    const label = document.createElement('div');
+    label.className = 'cards-label';
+    label.textContent = 'IA — Selecione o produto';
+    wrapper.appendChild(label);
+
+    products.forEach((product, idx) => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+
+      const num = document.createElement('div');
+      num.className = 'card-number';
+      num.textContent = `Opção ${idx + 1}`;
+
+      const title = document.createElement('div');
+      title.className = 'card-title';
+      title.textContent = product.description;
+
+      card.appendChild(num);
+      card.appendChild(title);
+
+      const meta = document.createElement('div');
+      meta.className = 'card-meta';
+
+      if (product.brand) {
+        const t = document.createElement('span');
+        t.className = 'meta-tag';
+        t.textContent = `🏷️ ${product.brand}`;
+        meta.appendChild(t);
+      }
+      if (product.model) {
+        const t = document.createElement('span');
+        t.className = 'meta-tag';
+        t.textContent = `Mod: ${product.model}`;
+        meta.appendChild(t);
+      }
+      if (product.unity) {
+        const t = document.createElement('span');
+        t.className = 'meta-tag';
+        t.textContent = `Un: ${product.unity}`;
+        meta.appendChild(t);
+      }
+      if (product.code) {
+        const t = document.createElement('span');
+        t.className = 'meta-tag';
+        t.textContent = `Cód: ${product.code}`;
+        meta.appendChild(t);
+      }
+
+      if (meta.children.length > 0) card.appendChild(meta);
+
+      card.addEventListener('click', () => {
+        wrapper.querySelectorAll('.product-card').forEach(c => c.classList.add('card-selected'));
+        card.classList.remove('card-selected');
+        card.classList.add('card-selected-highlight');
+
+        addBubble(`✅ Produto selecionado: ${product.description}`, 'user', 'Engenheiro');
+        sendMessage(String(idx + 1), true);
+      });
+
+      wrapper.appendChild(card);
+    });
+
+    messagesEl.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  // ─── SIDEBAR ─────────────────────────────────────────────────
+
+  function renderSidebar() {
+    itemCount.textContent = selectedItems.length;
+
+    if (selectedItems.length === 0) {
+      selectedListEl.innerHTML = `
+        <div class="empty-state">
+          <span>📦</span>
+          <p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p>
+        </div>`;
+      exportBtn.disabled = true;
+      return;
+    }
+
+    exportBtn.disabled = false;
+    selectedListEl.innerHTML = '';
+
+    selectedItems.forEach((item, i) => {
+      const el = document.createElement('div');
+      el.className = 'selected-item';
+
+      const typeEl = document.createElement('div');
+      typeEl.className = 'item-type';
+      typeEl.textContent = item.type === 'service' ? '⚙️ Serviço' : '📦 Produto';
+
+      const desc = document.createElement('div');
+      desc.className = 'item-desc';
+      desc.textContent = `${i + 1}. ${item.description}`;
+
+      el.appendChild(typeEl);
+      el.appendChild(desc);
+      selectedListEl.appendChild(el);
+    });
+  }
+
+  // ─── COMMUNICATION ───────────────────────────────────────────
+
+  async function sendMessage(userInput, skipBubble = false) {
+    if (!skipBubble) {
+      addBubble(userInput, 'user', 'Engenheiro');
+    }
+
+    sendBtn.disabled = true;
+    setStatus('Agente processando...');
+    showTyping();
+
+    try {
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_input: userInput, context }),
+      });
+
+      hideTyping();
+
+      if (!res.ok) {
+        throw new Error(`Erro HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      context = data.context ?? null;
+
+      // Atualiza lista de selecionados
+      if (context?.state?.selected_items) {
+        selectedItems = context.state.selected_items;
+        renderSidebar();
+      }
+
+      // Trata cada tipo de tool
+      switch (data.tool) {
+        case 'buscar_servico':
+          addServiceCards(data.data || [], data.message);
+          setStatus('Clique em um serviço para selecioná-lo.');
+          break;
+
+        case 'buscar_produto':
+          addProductCards(data.data || [], data.message);
+          setStatus('Clique em um produto para selecioná-lo.');
+          break;
+
+        case 'lista_completa':
+          selectedItems = data.data || [];
+          renderSidebar();
+          addBubble(data.message, 'ai', 'IA');
+          setStatus('Lista completa! Exporte para salvar.');
+          break;
+
+        case 'mensagem':
+          if (data.message) addBubble(data.message, 'ai', 'IA');
+          setStatus('Aguardando resposta...');
+          break;
+
+        case 'erro':
+          addBubble(data.message, 'ai', 'IA', true);
+          setStatus('Ocorreu um erro. Tente novamente.');
+          break;
+
+        default:
+          if (data.message) addBubble(data.message, 'ai', 'IA');
+          setStatus('Pronto.');
+      }
+
+    } catch (err) {
+      hideTyping();
+      addBubble(`Erro de conexão: ${err.message}`, 'ai', 'IA', true);
+      setStatus('Erro de conexão com o servidor.');
+    }
+
+    sendBtn.disabled = false;
+  }
+
+  // ─── EXPORT ──────────────────────────────────────────────────
+
+  exportBtn.addEventListener('click', () => {
+    if (!selectedItems.length) return;
+
+    const lines = [
+      '═══════════════════════════════════════',
+      '         LISTA DE MATERIAIS - OBRA',
+      `         Gerado em: ${new Date().toLocaleString('pt-BR')}`,
+      '═══════════════════════════════════════',
+      '',
+    ];
+
+    let serviceIdx = 0;
+    selectedItems.forEach((item, i) => {
+      if (item.type === 'service') {
+        serviceIdx++;
+        lines.push(`\n[SERVIÇO ${serviceIdx}] ${item.description}`);
+        lines.push('─────────────────────────────────────');
+      } else {
+        lines.push(`  ${i + 1}. ${item.description}`);
+      }
+    });
+
+    lines.push('\n═══════════════════════════════════════');
+    lines.push(`Total de itens: ${selectedItems.filter(i => i.type === 'product').length} produtos`);
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lista_materiais_${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // ─── EVENTS ──────────────────────────────────────────────────
+
+  sendBtn.addEventListener('click', () => {
+    const text = inputEl.value.trim();
+    if (!text) return;
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    sendMessage(text);
+  });
+
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+
+  inputEl.addEventListener('input', () => {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + 'px';
+  });
+
+  // ─── INIT ────────────────────────────────────────────────────
+
+  addBubble(
+    'Olá! Sou o agente de obras. Descreva os serviços que serão realizados e vou ajudá-lo a montar a lista de materiais necessários.\n\nVocê pode enviar vários serviços de uma vez, separados por ponto ou vírgula.',
+    'ai',
+    'IA'
+  );
+</script>
+</body>
+</html>
