@@ -2,6 +2,23 @@ TOOLS = [
     {
         "type": "function",
         "function": {
+            "name": "select_category",
+            "description": "Ask the engineer to select the category of the service before searching. Call this before search_services when the item is a service.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "item": {
+                        "type": "string",
+                        "description": "The service item the engineer wants to find.",
+                    }
+                },
+                "required": ["item"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "search_services",
             "description": "Search for construction services in the database. Use 2-3 simple keywords in Portuguese without accents.",
             "parameters": {

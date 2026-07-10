@@ -11,6 +11,19 @@ from app.services.service_service import search_services as _search_services
 load_dotenv()
 logger = logging.getLogger(__name__)
 
+CATEGORIES = [
+    "ALVENARIA", "CLIMATIZAÇÃO", "COBERTURA",
+    "DRENAGEM, OBRAS DE CONTENCAO, POCOS DE VISITA E CAIXAS",
+    "ELÉTRICA", "ESTRUTURA METALICA", "FECHAMENTO, VEDAÇÕES E ESQUADRIA",
+    "HIDRÁULICA", "HIDROSSANITARIA", "IMPERMEABILIZAÇÃO", "INCENDIO",
+    "INFRA-ESTRUTURA", "INSTALAÇÕES PRÓVISORIAS", "JARDINAGEM E URBANISMO",
+    "LIMPEZAS", "LOCAÇÃO", "MONTAGEM", "MOVIMENTAÇÃO DE TERRA", "PEDRA",
+    "PEDRAS (BANCADAS, DIVISORIAS E REVESTIMENTO)", "PINTURA", "REFRIGERAÇÃO",
+    "REVESTIMENTOS", "SERRALHERIA", "SERVIÇOS COMPLEMENTARES",
+    "SERVIÇOS GERAIS", "SERVIÇOS PRELIMINARES", "SERVIÇO TERCEIRIZADO",
+    "SUPER-ESTRUTURA",
+]
+
 
 def execute_tool(
     tool_name: str,
@@ -32,8 +45,22 @@ def execute_tool(
             "message": f"{len(items)} item(ns) registrado(s).",
         }
 
+    if tool_name == "select_category":
+        item = tool_args.get("item", "")
+        state["pending_category_for"] = item
+        return {
+            "tool": "selecionar_categoria",
+            "data": [{"name": c} for c in CATEGORIES],
+            "_history_content": json.dumps({
+                "categories": CATEGORIES,
+                "instruction": f"Show category cards for the engineer to pick for: '{item}'",
+            }, ensure_ascii=False),
+            "message": f"Selecione a categoria do serviço '{item}':",
+        }
+
     if tool_name == "search_services":
         query = tool_args.get("query", "").strip()
+        category = state.get("selected_category", "")
 
         if not query:
             return {
@@ -46,8 +73,9 @@ def execute_tool(
                 "message": "Query vazia. Extraia palavras-chave do item e busque novamente.",
             }
 
-        services = _search_services(query, db)
+        services = _search_services(query, db, category=category)
         state["last_services"] = services
+        state["selected_category"] = ""
 
         if not services:
             return {
@@ -65,7 +93,6 @@ def execute_tool(
             "tool": "buscar_servico",
             "found": len(services),
             "data": services,
-            # descrição completa para o Groq conseguir fazer match no confirm_selection
             "_history_content": json.dumps({
                 "found": len(services),
                 "items": [s["description"] for s in services],
@@ -117,6 +144,19 @@ def execute_tool(
         item_type = tool_args.get("type", "")
         description = tool_args.get("description", "")
 
+        if item_type == "category":
+            state["selected_category"] = description
+            pending_for = state.get("pending_category_for", "")
+            return {
+                "tool": "confirmado",
+                "data": {"category": description},
+                "_history_content": json.dumps({
+                    "selected_category": description,
+                    "instruction": f"Now call search_services for '{pending_for}' using category '{description}'",
+                }, ensure_ascii=False),
+                "message": f"Categoria '{description}' selecionada. Buscando serviços...",
+            }
+
         item = {
             "description": description,
             "type": item_type,
@@ -124,7 +164,6 @@ def execute_tool(
         }
         state.setdefault("selected_items", []).append(item)
 
-        # Remove o item dos pendentes de serviço/material
         pending = state.get("pending_items", [])
         desc = description.lower()
         state["pending_items"] = [
@@ -135,7 +174,6 @@ def execute_tool(
         if item_type == "service":
             last_services = state.get("last_services", [])
 
-            # Match flexível — aceita descrição parcial
             selected_service = next(
                 (s for s in last_services if s["description"] == description),
                 None
@@ -177,6 +215,8 @@ def execute_tool(
                 state["pending_supplies"] = pending_supplies[1:]
 
             remaining = state.get("pending_supplies", [])
+
+            item["parent_service"] = state.get("current_service", "")
 
             return {
                 "tool": "confirmado",

@@ -27,27 +27,23 @@
       --green-light: #dcfce7;
       --green-dark: #15803d;
       --red: #dc2626;
+      --purple: #7c3aed;
+      --purple-light: #ede9fe;
+      --purple-xlight: #f5f3ff;
       --radius-sm: 8px;
       --radius: 14px;
       --radius-lg: 20px;
       --radius-xl: 24px;
       --shadow: 0 4px 24px rgba(15,23,42,0.08);
-      --shadow-lg: 0 8px 40px rgba(15,23,42,0.12);
       font-family: Inter, system-ui, -apple-system, sans-serif;
     }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    /* LAYOUT */
     .layout {
       display: grid;
       grid-template-columns: 1fr 360px;
       grid-template-rows: 100vh;
-      gap: 0;
       max-width: 1400px;
       margin: 0 auto;
       padding: 20px;
@@ -55,14 +51,9 @@
     }
 
     @media (max-width: 900px) {
-      .layout {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto;
-        height: auto;
-      }
+      .layout { grid-template-columns: 1fr; grid-template-rows: auto auto; height: auto; }
     }
 
-    /* CHAT PANEL */
     .chat-panel {
       background: var(--surface);
       border-radius: var(--radius-xl);
@@ -84,48 +75,25 @@
     }
 
     .chat-header-icon {
-      width: 40px;
-      height: 40px;
+      width: 40px; height: 40px;
       background: linear-gradient(135deg, var(--blue), var(--teal));
       border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
     }
 
-    .chat-header-info h1 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.02em;
-    }
-
-    .chat-header-info p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 1px;
-    }
+    .chat-header-info h1 { font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .chat-header-info p { font-size: 0.8rem; color: var(--text-muted); margin-top: 1px; }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--green);
-      border-radius: 50%;
-      margin-left: auto;
-      flex-shrink: 0;
+      width: 8px; height: 8px; background: var(--green);
+      border-radius: 50%; margin-left: auto; flex-shrink: 0;
       box-shadow: 0 0 0 2px #dcfce7;
     }
 
-    /* MESSAGES */
     .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      flex: 1; overflow-y: auto; padding: 20px;
+      display: flex; flex-direction: column; gap: 12px;
       scroll-behavior: smooth;
     }
 
@@ -133,441 +101,168 @@
     .messages::-webkit-scrollbar-track { background: transparent; }
     .messages::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
 
-    /* BUBBLES */
-    .bubble {
-      max-width: 85%;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
+    .bubble { max-width: 85%; display: flex; flex-direction: column; gap: 4px; }
     .bubble.user { align-self: flex-end; align-items: flex-end; }
     .bubble.ai { align-self: flex-start; align-items: flex-start; }
 
     .bubble-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-light);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0 4px;
+      font-size: 0.72rem; font-weight: 600; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px;
     }
 
     .bubble-content {
-      padding: 12px 16px;
-      border-radius: var(--radius);
-      line-height: 1.6;
-      font-size: 0.9rem;
-      white-space: pre-wrap;
-      word-break: break-word;
+      padding: 12px 16px; border-radius: var(--radius);
+      line-height: 1.6; font-size: 0.9rem;
+      white-space: pre-wrap; word-break: break-word;
     }
 
-    .bubble.user .bubble-content {
-      background: var(--text);
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
+    .bubble.user .bubble-content { background: var(--text); color: white; border-bottom-right-radius: 4px; }
+    .bubble.ai .bubble-content { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .bubble.ai .bubble-content.error { background: #fef2f2; border-color: #fecaca; color: var(--red); }
 
-    .bubble.ai .bubble-content {
-      background: var(--surface-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-bottom-left-radius: 4px;
-    }
-
-    .bubble.ai .bubble-content.error {
-      background: #fef2f2;
-      border-color: #fecaca;
-      color: var(--red);
-    }
-
-    /* CARDS CONTAINER */
-    .cards-container {
-      align-self: flex-start;
-      width: 100%;
-      max-width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .cards-container { align-self: flex-start; width: 100%; display: flex; flex-direction: column; gap: 6px; }
 
     .cards-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-light);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0 4px;
-      margin-bottom: 2px;
+      font-size: 0.72rem; font-weight: 600; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px; margin-bottom: 2px;
     }
 
-    /* SERVICE CARD */
+    .category-card {
+      background: var(--purple-xlight); border: 1px solid #ddd6fe;
+      border-radius: var(--radius); padding: 12px 16px;
+      cursor: pointer; transition: all 0.15s ease;
+      position: relative; overflow: hidden;
+    }
+    .category-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--purple); border-radius: 3px 0 0 3px;
+    }
+    .category-card:hover { background: #ede9fe; border-color: var(--purple); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,58,237,0.15); }
+    .category-card .card-title { font-weight: 600; font-size: 0.88rem; color: #5b21b6; line-height: 1.4; }
+
+    .next-card {
+      background: #fefce8; border: 1px solid #fde68a;
+      border-radius: var(--radius); padding: 12px 16px;
+      cursor: pointer; transition: all 0.15s ease;
+      position: relative; overflow: hidden;
+    }
+    .next-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: #f59e0b; border-radius: 3px 0 0 3px;
+    }
+    .next-card:hover { background: #fef08a; border-color: #f59e0b; transform: translateY(-1px); }
+    .next-card .card-title { font-weight: 600; font-size: 0.88rem; color: #92400e; line-height: 1.4; }
+
     .service-card {
-      background: var(--teal-xlight);
-      border: 1px solid var(--teal-light);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      position: relative;
-      overflow: hidden;
+      background: var(--teal-xlight); border: 1px solid var(--teal-light);
+      border-radius: var(--radius); padding: 14px 16px;
+      cursor: pointer; transition: all 0.15s ease;
+      position: relative; overflow: hidden;
     }
-
     .service-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: var(--teal);
-      border-radius: 3px 0 0 3px;
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--teal); border-radius: 3px 0 0 3px;
     }
+    .service-card:hover { background: #a5f3fc; border-color: var(--teal); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(8,145,178,0.15); }
+    .service-card .card-number { font-size: 0.72rem; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .service-card .card-title { font-weight: 600; font-size: 0.88rem; color: #0e7490; line-height: 1.4; margin-bottom: 8px; }
+    .service-card .supplies-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
 
-    .service-card:hover {
-      background: #a5f3fc;
-      border-color: var(--teal);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(8,145,178,0.15);
-    }
+    .supplies-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .supply-tag { background: white; border: 1px solid var(--teal-light); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; color: #0e7490; line-height: 1.5; }
+    .no-supplies { font-size: 0.78rem; color: var(--text-light); font-style: italic; }
 
-    .service-card .card-number {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--teal);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
-    }
-
-    .service-card .card-title {
-      font-weight: 600;
-      font-size: 0.88rem;
-      color: #0e7490;
-      line-height: 1.4;
-      margin-bottom: 8px;
-    }
-
-    .service-card .supplies-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 6px;
-    }
-
-    .supplies-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    .supply-tag {
-      background: white;
-      border: 1px solid var(--teal-light);
-      border-radius: 6px;
-      padding: 2px 8px;
-      font-size: 0.75rem;
-      color: #0e7490;
-      line-height: 1.5;
-    }
-
-    .no-supplies {
-      font-size: 0.78rem;
-      color: var(--text-light);
-      font-style: italic;
-    }
-
-    /* PRODUCT CARD */
     .product-card {
-      background: var(--blue-xlight);
-      border: 1px solid var(--blue-light);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      position: relative;
-      overflow: hidden;
+      background: var(--blue-xlight); border: 1px solid var(--blue-light);
+      border-radius: var(--radius); padding: 14px 16px;
+      cursor: pointer; transition: all 0.15s ease;
+      position: relative; overflow: hidden;
     }
+    .product-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--blue); border-radius: 3px 0 0 3px; }
+    .product-card:hover { background: #bfdbfe; border-color: var(--blue); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.15); }
+    .product-card .card-number { font-size: 0.72rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .product-card .card-title { font-weight: 600; font-size: 0.88rem; color: #1e40af; line-height: 1.4; margin-bottom: 6px; }
+    .product-card .card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+    .meta-tag { background: white; border: 1px solid var(--blue-light); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; color: #1e40af; }
 
-    .product-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: var(--blue);
-      border-radius: 3px 0 0 3px;
-    }
+    .card-selected { pointer-events: none; opacity: 0.5; }
+    .card-selected-highlight { pointer-events: none; opacity: 1 !important; border-color: var(--green) !important; background: var(--green-light) !important; }
 
-    .product-card:hover {
-      background: #bfdbfe;
-      border-color: var(--blue);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(37,99,235,0.15);
-    }
-
-    .product-card .card-number {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--blue);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
-    }
-
-    .product-card .card-title {
-      font-weight: 600;
-      font-size: 0.88rem;
-      color: #1e40af;
-      line-height: 1.4;
-      margin-bottom: 6px;
-    }
-
-    .product-card .card-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .meta-tag {
-      background: white;
-      border: 1px solid var(--blue-light);
-      border-radius: 6px;
-      padding: 2px 8px;
-      font-size: 0.75rem;
-      color: #1e40af;
-    }
-
-    /* CARD SELECTED STATE */
-    .card-selected {
-      pointer-events: none;
-      opacity: 0.5;
-    }
-
-    .card-selected-highlight {
-      pointer-events: none;
-      opacity: 1 !important;
-      border-color: var(--green) !important;
-      background: var(--green-light) !important;
-    }
-
-    /* COMPOSER */
     .composer {
-      border-top: 1px solid var(--border);
-      padding: 16px 20px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-end;
-      flex-shrink: 0;
-      background: var(--surface);
+      border-top: 1px solid var(--border); padding: 16px 20px;
+      display: flex; gap: 10px; align-items: flex-end;
+      flex-shrink: 0; background: var(--surface);
     }
 
     .composer textarea {
-      flex: 1;
-      min-height: 64px;
-      max-height: 160px;
-      resize: none;
-      border: 1px solid var(--border-strong);
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      font-size: 0.9rem;
-      font-family: inherit;
-      line-height: 1.5;
-      color: var(--text);
-      background: var(--surface-2);
-      outline: none;
+      flex: 1; min-height: 64px; max-height: 160px;
+      resize: none; border: 1px solid var(--border-strong);
+      border-radius: var(--radius); padding: 12px 14px;
+      font-size: 0.9rem; font-family: inherit; line-height: 1.5;
+      color: var(--text); background: var(--surface-2); outline: none;
       transition: border-color 0.15s;
     }
-
-    .composer textarea:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-    }
-
+    .composer textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
     .composer textarea::placeholder { color: var(--text-light); }
 
     .send-btn {
-      width: 44px;
-      height: 44px;
-      border: none;
-      border-radius: var(--radius-sm);
-      background: var(--blue);
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.15s, transform 0.1s;
+      width: 44px; height: 44px; border: none;
+      border-radius: var(--radius-sm); background: var(--blue);
+      color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.15s, transform 0.1s;
     }
-
     .send-btn:hover:not(:disabled) { background: var(--blue-dark); transform: scale(1.05); }
     .send-btn:disabled { background: var(--border-strong); cursor: not-allowed; }
-
     .send-btn svg { width: 18px; height: 18px; }
 
-    .status-bar {
-      padding: 8px 20px 12px;
-      font-size: 0.78rem;
-      color: var(--text-light);
-      text-align: center;
-      flex-shrink: 0;
-    }
+    .status-bar { padding: 8px 20px 12px; font-size: 0.78rem; color: var(--text-light); text-align: center; flex-shrink: 0; }
 
-    /* SIDEBAR */
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      min-height: 0;
-    }
+    .sidebar { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
 
     .sidebar-panel {
-      background: var(--surface);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      background: var(--surface); border-radius: var(--radius-xl);
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
     }
 
-    .sidebar-header {
-      padding: 18px 20px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
+    .sidebar-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .sidebar-header h2 { font-size: 0.92rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .item-count { background: var(--blue-light); color: var(--blue); font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
 
-    .sidebar-header h2 {
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .item-count {
-      background: var(--blue-light);
-      color: var(--blue);
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 99px;
-    }
-
-    .selected-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    .selected-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
     .selected-list::-webkit-scrollbar { width: 3px; }
     .selected-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 20px;
-      gap: 8px;
-      color: var(--text-light);
-    }
-
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; gap: 8px; color: var(--text-light); }
     .empty-state span { font-size: 28px; }
     .empty-state p { font-size: 0.82rem; text-align: center; line-height: 1.5; }
 
-    .selected-item {
-      background: var(--green-light);
-      border: 1px solid #86efac;
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      position: relative;
-    }
+    .selected-item { background: var(--green-light); border: 1px solid #86efac; border-radius: var(--radius-sm); padding: 10px 12px; }
+    .selected-item .item-type { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--green-dark); margin-bottom: 2px; }
+    .selected-item .item-desc { font-size: 0.82rem; font-weight: 600; color: #14532d; line-height: 1.4; }
 
-    .selected-item .item-type {
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--green-dark);
-      margin-bottom: 2px;
-    }
-
-    .selected-item .item-desc {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #14532d;
-      line-height: 1.4;
-    }
-
-    .selected-item .item-meta {
-      font-size: 0.75rem;
-      color: #166534;
-      margin-top: 3px;
-    }
-
-    /* EXPORT BUTTON */
     .export-btn {
-      margin: 0 12px 12px;
-      padding: 12px;
-      border: none;
-      border-radius: var(--radius);
-      background: var(--green);
-      color: white;
-      font-weight: 700;
-      font-size: 0.88rem;
-      cursor: pointer;
-      transition: background 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      flex-shrink: 0;
+      margin: 0 12px 12px; padding: 12px; border: none;
+      border-radius: var(--radius); background: var(--green);
+      color: white; font-weight: 700; font-size: 0.88rem;
+      cursor: pointer; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0;
     }
-
     .export-btn:hover:not(:disabled) { background: var(--green-dark); }
     .export-btn:disabled { background: var(--border-strong); color: var(--text-light); cursor: not-allowed; }
 
-    /* TYPING INDICATOR */
-    .typing {
-      display: flex;
-      gap: 4px;
-      padding: 12px 16px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      border-bottom-left-radius: 4px;
-      width: fit-content;
-    }
-
-    .typing span {
-      width: 6px;
-      height: 6px;
-      background: var(--text-light);
-      border-radius: 50%;
-      animation: bounce 1.2s infinite;
-    }
-
+    .typing { display: flex; gap: 4px; padding: 12px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); border-bottom-left-radius: 4px; width: fit-content; }
+    .typing span { width: 6px; height: 6px; background: var(--text-light); border-radius: 50%; animation: bounce 1.2s infinite; }
     .typing span:nth-child(2) { animation-delay: 0.2s; }
     .typing span:nth-child(3) { animation-delay: 0.4s; }
 
-    @keyframes bounce {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-6px); }
-    }
+    @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
   </style>
 </head>
 <body>
 <div class="layout">
 
-  <!-- CHAT PANEL -->
   <div class="chat-panel">
     <div class="chat-header">
       <div class="chat-header-icon">🏗️</div>
@@ -575,17 +270,13 @@
         <h1>Agente de Obras</h1>
         <p>Monte listas de materiais com inteligência artificial</p>
       </div>
-      <div class="status-dot" id="status-dot"></div>
+      <div class="status-dot"></div>
     </div>
 
     <div class="messages" id="messages"></div>
 
     <div class="composer">
-      <textarea
-        id="user-input"
-        placeholder="Descreva os serviços da obra ou responda o agente..."
-        rows="2"
-      ></textarea>
+      <textarea id="user-input" placeholder="Descreva os serviços da obra ou responda o agente..." rows="2"></textarea>
       <button class="send-btn" id="send-btn" title="Enviar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -597,7 +288,6 @@
     <div class="status-bar" id="status-bar">Pronto. Descreva os serviços para começar.</div>
   </div>
 
-  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="sidebar-panel" style="flex: 1; min-height: 0;">
       <div class="sidebar-header">
@@ -612,9 +302,7 @@
           <p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p>
         </div>
       </div>
-      <button class="export-btn" id="export-btn" disabled>
-        ⬇️ Exportar Lista (.txt)
-      </button>
+      <button class="export-btn" id="export-btn" disabled>⬇️ Exportar Lista (.txt)</button>
     </div>
   </div>
 
@@ -633,14 +321,19 @@
   let selectedItems = [];
   let typingEl = null;
 
-  // ─── UTILITIES ───────────────────────────────────────────────
+  function setStatus(text) { statusBar.textContent = text; }
+  function scrollToBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
-  function setStatus(text) {
-    statusBar.textContent = text;
-  }
-
-  function scrollToBottom() {
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+  function resetChat() {
+    context = null;
+    selectedItems = [];
+    renderSidebar();
+    messagesEl.innerHTML = '';
+    addBubble(
+      'Lista exportada com sucesso! Pode enviar uma nova lista de serviços quando quiser.',
+      'ai', 'IA'
+    );
+    setStatus('Pronto. Descreva os serviços para começar.');
   }
 
   function showTyping() {
@@ -659,27 +352,96 @@
     if (typingEl) { typingEl.remove(); typingEl = null; }
   }
 
-  // ─── RENDER HELPERS ──────────────────────────────────────────
-
   function addBubble(text, role, label, isError = false) {
     const wrapper = document.createElement('div');
     wrapper.className = `bubble ${role}`;
-
     if (label) {
       const lbl = document.createElement('div');
       lbl.className = 'bubble-label';
       lbl.textContent = label;
       wrapper.appendChild(lbl);
     }
-
     const content = document.createElement('div');
     content.className = 'bubble-content' + (isError ? ' error' : '');
     content.textContent = text;
     wrapper.appendChild(content);
-
     messagesEl.appendChild(wrapper);
     scrollToBottom();
     return wrapper;
+  }
+
+  function addCategoryCards(categories, message) {
+    if (message) addBubble(message, 'ai', 'IA');
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'cards-container';
+
+    const label = document.createElement('div');
+    label.className = 'cards-label';
+    label.textContent = 'IA — Selecione a categoria';
+    wrapper.appendChild(label);
+
+    categories.forEach((cat) => {
+      const card = document.createElement('div');
+      card.className = 'category-card';
+
+      const title = document.createElement('div');
+      title.className = 'card-title';
+      title.textContent = cat.name;
+      card.appendChild(title);
+
+      card.addEventListener('click', () => {
+        wrapper.querySelectorAll('.category-card').forEach(c => c.classList.add('card-selected'));
+        card.classList.remove('card-selected');
+        card.classList.add('card-selected-highlight');
+        addBubble(`✅ Categoria: ${cat.name}`, 'user', 'Engenheiro');
+        sendMessage(JSON.stringify({ type: 'category', description: cat.name }), true);
+      });
+
+      wrapper.appendChild(card);
+    });
+
+    messagesEl.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  function addNextItemCards(options, message) {
+    if (message) addBubble(message, 'ai', 'IA');
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'cards-container';
+
+    const label = document.createElement('div');
+    label.className = 'cards-label';
+    label.textContent = 'IA — Próximo item';
+    wrapper.appendChild(label);
+
+    options.forEach((opt) => {
+      const card = document.createElement('div');
+      card.className = 'next-card';
+
+      const title = document.createElement('div');
+      title.className = 'card-title';
+      title.textContent = opt.name;
+      card.appendChild(title);
+
+      card.addEventListener('click', () => {
+        wrapper.querySelectorAll('.next-card').forEach(c => c.classList.add('card-selected'));
+        card.classList.remove('card-selected');
+        card.classList.add('card-selected-highlight');
+        addBubble(`✅ ${opt.name}`, 'user', 'Engenheiro');
+        if (opt.name === 'Não, finalizar') {
+          sendMessage('nao', true);
+        } else {
+          sendMessage('sim', true);
+        }
+      });
+
+      wrapper.appendChild(card);
+    });
+
+    messagesEl.appendChild(wrapper);
+    scrollToBottom();
   }
 
   function addServiceCards(services, message) {
@@ -740,12 +502,10 @@
       }
 
       card.addEventListener('click', () => {
-        // Visual feedback
         wrapper.querySelectorAll('.service-card').forEach(c => c.classList.add('card-selected'));
         card.classList.remove('card-selected');
         card.classList.add('card-selected-highlight');
-
-        addBubble(`✅ Serviço selecionado: ${service.description}`, 'user', 'Engenheiro');
+        addBubble(`✅ Serviço: ${service.description}`, 'user', 'Engenheiro');
         sendMessage(String(idx + 1), true);
       });
 
@@ -785,30 +545,10 @@
       const meta = document.createElement('div');
       meta.className = 'card-meta';
 
-      if (product.brand) {
-        const t = document.createElement('span');
-        t.className = 'meta-tag';
-        t.textContent = `🏷️ ${product.brand}`;
-        meta.appendChild(t);
-      }
-      if (product.model) {
-        const t = document.createElement('span');
-        t.className = 'meta-tag';
-        t.textContent = `Mod: ${product.model}`;
-        meta.appendChild(t);
-      }
-      if (product.unity) {
-        const t = document.createElement('span');
-        t.className = 'meta-tag';
-        t.textContent = `Un: ${product.unity}`;
-        meta.appendChild(t);
-      }
-      if (product.code) {
-        const t = document.createElement('span');
-        t.className = 'meta-tag';
-        t.textContent = `Cód: ${product.code}`;
-        meta.appendChild(t);
-      }
+      if (product.brand) { const t = document.createElement('span'); t.className = 'meta-tag'; t.textContent = `🏷️ ${product.brand}`; meta.appendChild(t); }
+      if (product.model) { const t = document.createElement('span'); t.className = 'meta-tag'; t.textContent = `Mod: ${product.model}`; meta.appendChild(t); }
+      if (product.unity) { const t = document.createElement('span'); t.className = 'meta-tag'; t.textContent = `Un: ${product.unity}`; meta.appendChild(t); }
+      if (product.code) { const t = document.createElement('span'); t.className = 'meta-tag'; t.textContent = `Cód: ${product.code}`; meta.appendChild(t); }
 
       if (meta.children.length > 0) card.appendChild(meta);
 
@@ -816,8 +556,7 @@
         wrapper.querySelectorAll('.product-card').forEach(c => c.classList.add('card-selected'));
         card.classList.remove('card-selected');
         card.classList.add('card-selected-highlight');
-
-        addBubble(`✅ Produto selecionado: ${product.description}`, 'user', 'Engenheiro');
+        addBubble(`✅ Produto: ${product.description}`, 'user', 'Engenheiro');
         sendMessage(String(idx + 1), true);
       });
 
@@ -828,17 +567,11 @@
     scrollToBottom();
   }
 
-  // ─── SIDEBAR ─────────────────────────────────────────────────
-
   function renderSidebar() {
     itemCount.textContent = selectedItems.length;
 
     if (selectedItems.length === 0) {
-      selectedListEl.innerHTML = `
-        <div class="empty-state">
-          <span>📦</span>
-          <p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p>
-        </div>`;
+      selectedListEl.innerHTML = `<div class="empty-state"><span>📦</span><p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p></div>`;
       exportBtn.disabled = true;
       return;
     }
@@ -846,59 +579,81 @@
     exportBtn.disabled = false;
     selectedListEl.innerHTML = '';
 
-    selectedItems.forEach((item, i) => {
+    const standalone = selectedItems.filter(i => i.type === 'product' && !i.parent_service);
+    const services = selectedItems.filter(i => i.type === 'service');
+
+    standalone.forEach(item => {
       const el = document.createElement('div');
       el.className = 'selected-item';
-
-      const typeEl = document.createElement('div');
-      typeEl.className = 'item-type';
-      typeEl.textContent = item.type === 'service' ? '⚙️ Serviço' : '📦 Produto';
-
-      const desc = document.createElement('div');
-      desc.className = 'item-desc';
-      desc.textContent = `${i + 1}. ${item.description}`;
-
-      el.appendChild(typeEl);
-      el.appendChild(desc);
+      el.innerHTML = `<div class="item-type">📦 Produto</div><div class="item-desc">${item.description}</div>`;
       selectedListEl.appendChild(el);
+    });
+
+    services.forEach(service => {
+      const serviceEl = document.createElement('div');
+      serviceEl.className = 'selected-item';
+      serviceEl.style.background = '#ecfeff';
+      serviceEl.style.borderColor = '#a5f3fc';
+      serviceEl.innerHTML = `<div class="item-type" style="color:#0e7490;">⚙️ Serviço</div><div class="item-desc" style="color:#0e7490;">${service.description}</div>`;
+      selectedListEl.appendChild(serviceEl);
+
+      const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
+      children.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'selected-item';
+        el.style.marginLeft = '12px';
+        el.style.borderLeft = '3px solid #a5f3fc';
+        el.innerHTML = `<div class="item-type">📦 Insumo</div><div class="item-desc">${item.description}</div>`;
+        selectedListEl.appendChild(el);
+      });
     });
   }
 
-  // ─── COMMUNICATION ───────────────────────────────────────────
-
   async function sendMessage(userInput, skipBubble = false) {
-    if (!skipBubble) {
-      addBubble(userInput, 'user', 'Engenheiro');
-    }
+    if (!skipBubble) addBubble(userInput, 'user', 'Engenheiro');
 
     sendBtn.disabled = true;
     setStatus('Agente processando...');
     showTyping();
 
+    let payload = { user_input: userInput, context };
+    try {
+      const parsed = JSON.parse(userInput);
+      if (parsed.type === 'category') {
+        payload = { user_input: `confirm_category:${parsed.description}`, context };
+      }
+    } catch (_) {}
+
     try {
       const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_input: userInput, context }),
+        body: JSON.stringify(payload),
       });
 
       hideTyping();
 
-      if (!res.ok) {
-        throw new Error(`Erro HTTP ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
 
       const data = await res.json();
       context = data.context ?? null;
 
-      // Atualiza lista de selecionados
       if (context?.state?.selected_items) {
         selectedItems = context.state.selected_items;
         renderSidebar();
       }
 
-      // Trata cada tipo de tool
       switch (data.tool) {
+        case 'selecionar_categoria':
+          addCategoryCards(data.data || [], data.message);
+          setStatus('Selecione a categoria do serviço.');
+          break;
+
+        case 'proximo_item':
+          addNextItemCards(data.data || [], data.message);
+          setStatus('Confirme para continuar.');
+          break;
+
         case 'buscar_servico':
           addServiceCards(data.data || [], data.message);
           setStatus('Clique em um serviço para selecioná-lo.');
@@ -940,8 +695,6 @@
     sendBtn.disabled = false;
   }
 
-  // ─── EXPORT ──────────────────────────────────────────────────
-
   exportBtn.addEventListener('click', () => {
     if (!selectedItems.length) return;
 
@@ -953,19 +706,39 @@
       '',
     ];
 
+    let productIdx = 0;
     let serviceIdx = 0;
-    selectedItems.forEach((item, i) => {
-      if (item.type === 'service') {
-        serviceIdx++;
-        lines.push(`\n[SERVIÇO ${serviceIdx}] ${item.description}`);
-        lines.push('─────────────────────────────────────');
+
+    const standalone = selectedItems.filter(i => i.type === 'product' && !i.parent_service);
+    const services = selectedItems.filter(i => i.type === 'service');
+
+    if (standalone.length > 0) {
+      lines.push('📦 MATERIAIS DIRETOS');
+      lines.push('─────────────────────────────────────');
+      standalone.forEach(item => {
+        productIdx++;
+        lines.push(`  ${productIdx}. ${item.description}`);
+      });
+    }
+
+    services.forEach(service => {
+      serviceIdx++;
+      lines.push(`\n⚙️ [SERVIÇO ${serviceIdx}] ${service.description}`);
+      lines.push('─────────────────────────────────────');
+
+      const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
+      if (children.length > 0) {
+        children.forEach(item => {
+          productIdx++;
+          lines.push(`  ${productIdx}. ${item.description}`);
+        });
       } else {
-        lines.push(`  ${i + 1}. ${item.description}`);
+        lines.push('  (sem insumos selecionados)');
       }
     });
 
     lines.push('\n═══════════════════════════════════════');
-    lines.push(`Total de itens: ${selectedItems.filter(i => i.type === 'product').length} produtos`);
+    lines.push(`Serviços: ${services.length} | Produtos: ${productIdx}`);
 
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -974,9 +747,12 @@
     a.download = `lista_materiais_${new Date().toISOString().slice(0,10)}.txt`;
     a.click();
     URL.revokeObjectURL(url);
-  });
 
-  // ─── EVENTS ──────────────────────────────────────────────────
+    // Limpa o chat após exportar
+    setTimeout(() => {
+      resetChat();
+    }, 500);
+  });
 
   sendBtn.addEventListener('click', () => {
     const text = inputEl.value.trim();
@@ -987,10 +763,7 @@
   });
 
   inputEl.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendBtn.click();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendBtn.click(); }
   });
 
   inputEl.addEventListener('input', () => {
@@ -998,12 +771,9 @@
     inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + 'px';
   });
 
-  // ─── INIT ────────────────────────────────────────────────────
-
   addBubble(
     'Olá! Sou o agente de obras. Descreva os serviços que serão realizados e vou ajudá-lo a montar a lista de materiais necessários.\n\nVocê pode enviar vários serviços de uma vez, separados por ponto ou vírgula.',
-    'ai',
-    'IA'
+    'ai', 'IA'
   );
 </script>
 </body>

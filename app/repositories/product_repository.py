@@ -6,34 +6,26 @@ class ProductRepository:
     def __init__(self, conn):
         self.conn = conn
 
-    def search(self, text: str, limit: int = 10) -> list[dict[str, Any]]:
-        """Busca produtos por descrição usando unaccent para ignorar acentos."""
-
+    def search(self, query: str, limit: int = 10) -> list[dict[str, Any]]:
         cursor = self.conn.cursor()
-        words = [w for w in text.strip().split() if len(w) > 2]
+
+        # Usa só as 2 primeiras palavras para busca mais ampla
+        words = [w.strip() for w in query.strip().split() if len(w.strip()) > 1]
+        words = words[:2]  # máximo 2 palavras
 
         if not words:
             return []
 
-        # Primeira palavra como prefixo, demais como filtro
-        first = words[0]
-        rest = words[1:]
-
-        conditions = ["unaccent(description) ILIKE unaccent(%s)"]
-        params: list[Any] = [f"{first}%"]
-
-        for w in rest:
-            conditions.append("unaccent(description) ILIKE unaccent(%s)")
-            params.append(f"%{w}%")
-
-        where = " AND ".join(conditions)
-        params.append(limit)
+        conditions = " AND ".join(
+            "unaccent(description) ILIKE unaccent(%s)" for _ in words
+        )
+        params = [f"%{w}%" for w in words] + [limit]
 
         cursor.execute(
             f"""
             SELECT id, description, unity, brand, model, code
             FROM products
-            WHERE {where}
+            WHERE {conditions}
             LIMIT %s
             """,
             params,
