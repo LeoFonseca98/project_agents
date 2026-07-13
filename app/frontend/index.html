@@ -27,12 +27,12 @@
       --green-light: #dcfce7;
       --green-dark: #15803d;
       --red: #dc2626;
+      --red-light: #fee2e2;
       --purple: #7c3aed;
-      --purple-light: #ede9fe;
       --purple-xlight: #f5f3ff;
+      --orange: #f59e0b;
       --radius-sm: 8px;
       --radius: 14px;
-      --radius-lg: 20px;
       --radius-xl: 24px;
       --shadow: 0 4px 24px rgba(15,23,42,0.08);
       font-family: Inter, system-ui, -apple-system, sans-serif;
@@ -40,178 +40,84 @@
 
     body { background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      grid-template-rows: 100vh;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-      gap: 20px;
-    }
+    .layout { display: grid; grid-template-columns: 1fr 360px; grid-template-rows: 100vh; max-width: 1400px; margin: 0 auto; padding: 20px; gap: 20px; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; grid-template-rows: auto auto; height: auto; } }
 
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; grid-template-rows: auto auto; height: auto; }
-    }
+    .chat-panel { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
 
-    .chat-panel {
-      background: var(--surface);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-height: 0;
-    }
-
-    .chat-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-
-    .chat-header-icon {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, var(--blue), var(--teal));
-      border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; flex-shrink: 0;
-    }
-
+    .chat-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .chat-header-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--blue), var(--teal)); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
     .chat-header-info h1 { font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
     .chat-header-info p { font-size: 0.8rem; color: var(--text-muted); margin-top: 1px; }
+    .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin-left: auto; flex-shrink: 0; box-shadow: 0 0 0 2px #dcfce7; }
 
-    .status-dot {
-      width: 8px; height: 8px; background: var(--green);
-      border-radius: 50%; margin-left: auto; flex-shrink: 0;
-      box-shadow: 0 0 0 2px #dcfce7;
-    }
-
-    .messages {
-      flex: 1; overflow-y: auto; padding: 20px;
-      display: flex; flex-direction: column; gap: 12px;
-      scroll-behavior: smooth;
-    }
-
+    .messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
     .messages::-webkit-scrollbar { width: 4px; }
-    .messages::-webkit-scrollbar-track { background: transparent; }
     .messages::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
 
     .bubble { max-width: 85%; display: flex; flex-direction: column; gap: 4px; }
     .bubble.user { align-self: flex-end; align-items: flex-end; }
     .bubble.ai { align-self: flex-start; align-items: flex-start; }
-
-    .bubble-label {
-      font-size: 0.72rem; font-weight: 600; color: var(--text-light);
-      text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px;
-    }
-
-    .bubble-content {
-      padding: 12px 16px; border-radius: var(--radius);
-      line-height: 1.6; font-size: 0.9rem;
-      white-space: pre-wrap; word-break: break-word;
-    }
-
+    .bubble-label { font-size: 0.72rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px; }
+    .bubble-content { padding: 12px 16px; border-radius: var(--radius); line-height: 1.6; font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; }
     .bubble.user .bubble-content { background: var(--text); color: white; border-bottom-right-radius: 4px; }
     .bubble.ai .bubble-content { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
     .bubble.ai .bubble-content.error { background: #fef2f2; border-color: #fecaca; color: var(--red); }
 
     .cards-container { align-self: flex-start; width: 100%; display: flex; flex-direction: column; gap: 6px; }
+    .cards-label { font-size: 0.72rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px; margin-bottom: 2px; }
 
-    .cards-label {
-      font-size: 0.72rem; font-weight: 600; color: var(--text-light);
-      text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px; margin-bottom: 2px;
-    }
+    .category-card { background: var(--purple-xlight); border: 1px solid #ddd6fe; border-radius: var(--radius); padding: 12px 16px; cursor: pointer; transition: all 0.15s ease; position: relative; overflow: hidden; }
+    .category-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--purple); border-radius: 3px 0 0 3px; }
+    .category-card:hover { background: #ede9fe; border-color: var(--purple); transform: translateY(-1px); }
+    .category-card .card-title { font-weight: 600; font-size: 0.88rem; color: #5b21b6; }
 
-    .category-card {
-      background: var(--purple-xlight); border: 1px solid #ddd6fe;
-      border-radius: var(--radius); padding: 12px 16px;
-      cursor: pointer; transition: all 0.15s ease;
-      position: relative; overflow: hidden;
-    }
-    .category-card::before {
-      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-      width: 3px; background: var(--purple); border-radius: 3px 0 0 3px;
-    }
-    .category-card:hover { background: #ede9fe; border-color: var(--purple); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,58,237,0.15); }
-    .category-card .card-title { font-weight: 600; font-size: 0.88rem; color: #5b21b6; line-height: 1.4; }
+    .next-card { background: #fefce8; border: 1px solid #fde68a; border-radius: var(--radius); padding: 12px 16px; cursor: pointer; transition: all 0.15s ease; position: relative; overflow: hidden; }
+    .next-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--orange); border-radius: 3px 0 0 3px; }
+    .next-card:hover { background: #fef08a; border-color: var(--orange); transform: translateY(-1px); }
+    .next-card .card-title { font-weight: 600; font-size: 0.88rem; color: #92400e; }
 
-    .next-card {
-      background: #fefce8; border: 1px solid #fde68a;
-      border-radius: var(--radius); padding: 12px 16px;
-      cursor: pointer; transition: all 0.15s ease;
-      position: relative; overflow: hidden;
-    }
-    .next-card::before {
-      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-      width: 3px; background: #f59e0b; border-radius: 3px 0 0 3px;
-    }
-    .next-card:hover { background: #fef08a; border-color: #f59e0b; transform: translateY(-1px); }
-    .next-card .card-title { font-weight: 600; font-size: 0.88rem; color: #92400e; line-height: 1.4; }
-
-    .service-card {
-      background: var(--teal-xlight); border: 1px solid var(--teal-light);
-      border-radius: var(--radius); padding: 14px 16px;
-      cursor: pointer; transition: all 0.15s ease;
-      position: relative; overflow: hidden;
-    }
-    .service-card::before {
-      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-      width: 3px; background: var(--teal); border-radius: 3px 0 0 3px;
-    }
-    .service-card:hover { background: #a5f3fc; border-color: var(--teal); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(8,145,178,0.15); }
+    .service-card { background: var(--teal-xlight); border: 1px solid var(--teal-light); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; transition: all 0.15s ease; position: relative; overflow: hidden; }
+    .service-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--teal); border-radius: 3px 0 0 3px; }
+    .service-card:hover { background: #a5f3fc; border-color: var(--teal); transform: translateY(-1px); }
     .service-card .card-number { font-size: 0.72rem; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
     .service-card .card-title { font-weight: 600; font-size: 0.88rem; color: #0e7490; line-height: 1.4; margin-bottom: 8px; }
     .service-card .supplies-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
-
     .supplies-tags { display: flex; flex-wrap: wrap; gap: 4px; }
     .supply-tag { background: white; border: 1px solid var(--teal-light); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; color: #0e7490; line-height: 1.5; }
     .no-supplies { font-size: 0.78rem; color: var(--text-light); font-style: italic; }
 
-    .product-card {
-      background: var(--blue-xlight); border: 1px solid var(--blue-light);
-      border-radius: var(--radius); padding: 14px 16px;
-      cursor: pointer; transition: all 0.15s ease;
-      position: relative; overflow: hidden;
-    }
+    .product-card { background: var(--blue-xlight); border: 1px solid var(--blue-light); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; transition: all 0.15s ease; position: relative; overflow: hidden; }
     .product-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--blue); border-radius: 3px 0 0 3px; }
-    .product-card:hover { background: #bfdbfe; border-color: var(--blue); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.15); }
+    .product-card:hover { background: #bfdbfe; border-color: var(--blue); transform: translateY(-1px); }
     .product-card .card-number { font-size: 0.72rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
     .product-card .card-title { font-weight: 600; font-size: 0.88rem; color: #1e40af; line-height: 1.4; margin-bottom: 6px; }
     .product-card .card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
     .meta-tag { background: white; border: 1px solid var(--blue-light); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; color: #1e40af; }
 
+    .manual-search-btn { margin-top: 6px; padding: 10px 16px; border: 1px dashed var(--blue); border-radius: var(--radius-sm); background: var(--blue-xlight); color: var(--blue); font-weight: 600; cursor: pointer; font-size: 0.85rem; width: 100%; transition: all 0.15s; text-align: left; }
+    .manual-search-btn:hover { background: var(--blue-light); }
+    .manual-search-row { display: flex; gap: 8px; margin-top: 8px; }
+    .manual-search-row input { flex: 1; padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.9rem; outline: none; }
+    .manual-search-row input:focus { border-color: var(--blue); }
+    .manual-search-row button { padding: 10px 16px; border: none; border-radius: var(--radius-sm); background: var(--blue); color: white; font-weight: 600; cursor: pointer; }
+
+    .quantity-container { align-self: flex-start; width: 100%; background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .quantity-container .qty-label { font-size: 0.82rem; font-weight: 600; color: #92400e; }
+    .quantity-container .qty-input-row { display: flex; gap: 8px; }
+    .quantity-container input { flex: 1; padding: 10px 14px; border: 1px solid #fde68a; border-radius: var(--radius-sm); font-size: 1rem; color: var(--text); background: white; outline: none; }
+    .quantity-container input:focus { border-color: var(--orange); }
+    .quantity-container .unit-badge { padding: 10px 12px; background: #fde68a; border-radius: 8px; font-weight: 600; color: #92400e; font-size: 0.85rem; white-space: nowrap; }
+    .quantity-container button { padding: 10px 20px; border: none; border-radius: var(--radius-sm); background: var(--orange); color: white; font-weight: 700; cursor: pointer; }
+
     .card-selected { pointer-events: none; opacity: 0.5; }
     .card-selected-highlight { pointer-events: none; opacity: 1 !important; border-color: var(--green) !important; background: var(--green-light) !important; }
 
-    .composer {
-      border-top: 1px solid var(--border); padding: 16px 20px;
-      display: flex; gap: 10px; align-items: flex-end;
-      flex-shrink: 0; background: var(--surface);
-    }
-
-    .composer textarea {
-      flex: 1; min-height: 64px; max-height: 160px;
-      resize: none; border: 1px solid var(--border-strong);
-      border-radius: var(--radius); padding: 12px 14px;
-      font-size: 0.9rem; font-family: inherit; line-height: 1.5;
-      color: var(--text); background: var(--surface-2); outline: none;
-      transition: border-color 0.15s;
-    }
+    .composer { border-top: 1px solid var(--border); padding: 16px 20px; display: flex; gap: 10px; align-items: flex-end; flex-shrink: 0; background: var(--surface); }
+    .composer textarea { flex: 1; min-height: 64px; max-height: 160px; resize: none; border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 12px 14px; font-size: 0.9rem; font-family: inherit; line-height: 1.5; color: var(--text); background: var(--surface-2); outline: none; transition: border-color 0.15s; }
     .composer textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
     .composer textarea::placeholder { color: var(--text-light); }
-
-    .send-btn {
-      width: 44px; height: 44px; border: none;
-      border-radius: var(--radius-sm); background: var(--blue);
-      color: white; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: background 0.15s, transform 0.1s;
-    }
+    .send-btn { width: 44px; height: 44px; border: none; border-radius: var(--radius-sm); background: var(--blue); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, transform 0.1s; }
     .send-btn:hover:not(:disabled) { background: var(--blue-dark); transform: scale(1.05); }
     .send-btn:disabled { background: var(--border-strong); cursor: not-allowed; }
     .send-btn svg { width: 18px; height: 18px; }
@@ -219,13 +125,7 @@
     .status-bar { padding: 8px 20px 12px; font-size: 0.78rem; color: var(--text-light); text-align: center; flex-shrink: 0; }
 
     .sidebar { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
-
-    .sidebar-panel {
-      background: var(--surface); border-radius: var(--radius-xl);
-      box-shadow: var(--shadow); border: 1px solid var(--border);
-      display: flex; flex-direction: column; overflow: hidden;
-    }
-
+    .sidebar-panel { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .sidebar-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
     .sidebar-header h2 { font-size: 0.92rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
     .item-count { background: var(--blue-light); color: var(--blue); font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
@@ -241,28 +141,66 @@
     .selected-item { background: var(--green-light); border: 1px solid #86efac; border-radius: var(--radius-sm); padding: 10px 12px; }
     .selected-item .item-type { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--green-dark); margin-bottom: 2px; }
     .selected-item .item-desc { font-size: 0.82rem; font-weight: 600; color: #14532d; line-height: 1.4; }
+    .selected-item .item-qty { font-size: 0.78rem; color: #166534; margin-top: 3px; }
 
-    .export-btn {
-      margin: 0 12px 12px; padding: 12px; border: none;
-      border-radius: var(--radius); background: var(--green);
-      color: white; font-weight: 700; font-size: 0.88rem;
-      cursor: pointer; transition: background 0.15s;
-      display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0;
-    }
+    .sidebar-actions { display: flex; gap: 8px; padding: 0 12px 12px; flex-shrink: 0; }
+    .export-btn { flex: 1; padding: 12px; border: none; border-radius: var(--radius); background: var(--green); color: white; font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .export-btn:hover:not(:disabled) { background: var(--green-dark); }
     .export-btn:disabled { background: var(--border-strong); color: var(--text-light); cursor: not-allowed; }
+    .clear-btn { padding: 12px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: white; color: var(--text-muted); font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.15s; }
+    .clear-btn:hover:not(:disabled) { border-color: var(--red); color: var(--red); background: var(--red-light); }
+    .clear-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .typing { display: flex; gap: 4px; padding: 12px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); border-bottom-left-radius: 4px; width: fit-content; }
     .typing span { width: 6px; height: 6px; background: var(--text-light); border-radius: 50%; animation: bounce 1.2s infinite; }
     .typing span:nth-child(2) { animation-delay: 0.2s; }
     .typing span:nth-child(3) { animation-delay: 0.4s; }
-
     @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: white; border-radius: var(--radius-xl); padding: 28px; width: 420px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+    .modal input { width: 100%; padding: 12px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.95rem; outline: none; margin-bottom: 16px; }
+    .modal input:focus { border-color: var(--blue); }
+    .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-buttons button { padding: 10px 20px; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
+    .btn-cancel { background: var(--surface-2); color: var(--text-muted); }
+    .btn-confirm { background: var(--green); color: white; }
+    .btn-confirm:hover { background: var(--green-dark); }
+
+    .history-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .history-panel.hidden { display: none; }
+    .history-box { background: white; border-radius: var(--radius-xl); width: 720px; max-width: 95vw; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow: hidden; }
+    .history-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .history-header h2 { font-size: 1rem; font-weight: 700; }
+    .history-header-actions { display: flex; align-items: center; gap: 8px; }
+    .history-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-muted); }
+    .history-search { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; }
+    .history-search input { flex: 1; padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 0.9rem; outline: none; }
+    .history-search input:focus { border-color: var(--blue); }
+    .show-archived-btn { padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: white; font-size: 0.8rem; cursor: pointer; color: var(--text-muted); white-space: nowrap; }
+    .show-archived-btn.active { background: var(--blue-xlight); border-color: var(--blue); color: var(--blue); }
+    .history-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+
+    .history-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; transition: all 0.15s; }
+    .history-item.archived { opacity: 0.6; border-style: dashed; }
+    .history-item-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .history-item-info { cursor: pointer; flex: 1; }
+    .history-item-info:hover .h-engineer { text-decoration: underline; }
+    .history-item .h-engineer { font-size: 0.72rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+    .history-item .h-date { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
+    .history-item .h-summary { font-size: 0.82rem; color: var(--text); }
+    .history-item .h-version { display: inline-block; background: var(--blue-light); color: var(--blue); font-size: 0.7rem; font-weight: 700; padding: 1px 6px; border-radius: 99px; margin-left: 6px; }
+    .history-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .h-btn { padding: 5px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: white; font-size: 0.75rem; cursor: pointer; color: var(--text-muted); transition: all 0.15s; white-space: nowrap; }
+    .h-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .h-btn.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+    .h-btn.success { border-color: var(--green); color: var(--green); background: var(--green-light); }
   </style>
 </head>
 <body>
 <div class="layout">
-
   <div class="chat-panel">
     <div class="chat-header">
       <div class="chat-header-icon">🏗️</div>
@@ -272,9 +210,7 @@
       </div>
       <div class="status-dot"></div>
     </div>
-
     <div class="messages" id="messages"></div>
-
     <div class="composer">
       <textarea id="user-input" placeholder="Descreva os serviços da obra ou responda o agente..." rows="2"></textarea>
       <button class="send-btn" id="send-btn" title="Enviar">
@@ -284,28 +220,55 @@
         </svg>
       </button>
     </div>
-
     <div class="status-bar" id="status-bar">Pronto. Descreva os serviços para começar.</div>
   </div>
 
   <div class="sidebar">
     <div class="sidebar-panel" style="flex: 1; min-height: 0;">
       <div class="sidebar-header">
-        <h2>
-          📋 Lista de Materiais
-          <span class="item-count" id="item-count">0</span>
-        </h2>
+        <h2>📋 Lista de Materiais <span class="item-count" id="item-count">0</span></h2>
+        <button onclick="openHistory()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;" title="Histórico">🕐</button>
       </div>
       <div class="selected-list" id="selected-list">
-        <div class="empty-state">
-          <span>📦</span>
-          <p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p>
-        </div>
+        <div class="empty-state"><span>📦</span><p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p></div>
       </div>
-      <button class="export-btn" id="export-btn" disabled>⬇️ Exportar Lista (.txt)</button>
+      <div class="sidebar-actions">
+        <button class="export-btn" id="export-btn" disabled>⬇️ Exportar</button>
+        <button class="clear-btn" id="clear-btn" disabled onclick="clearList()">🗑️</button>
+      </div>
     </div>
   </div>
+</div>
 
+<!-- Modal nome do engenheiro -->
+<div class="modal-overlay hidden" id="engineer-modal">
+  <div class="modal">
+    <h2>👷 Identificação do Engenheiro</h2>
+    <input type="text" id="engineer-name-input" placeholder="Digite seu nome completo" />
+    <div class="modal-buttons">
+      <button class="btn-cancel" onclick="closeEngineerModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="confirmExport()">Exportar e Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Painel de histórico -->
+<div class="history-panel hidden" id="history-panel">
+  <div class="history-box">
+    <div class="history-header">
+      <h2>🕐 Histórico de Listas</h2>
+      <div class="history-header-actions">
+        <button class="history-close" onclick="closeHistory()">✕</button>
+      </div>
+    </div>
+    <div class="history-search">
+      <input type="text" id="history-search-input" placeholder="Filtrar por nome do engenheiro..." oninput="filterHistory()" />
+      <button class="show-archived-btn" id="show-archived-btn" onclick="toggleArchived()">📦 Arquivadas</button>
+    </div>
+    <div class="history-list" id="history-list">
+      <div class="empty-state"><span>📋</span><p>Nenhuma lista salva ainda.</p></div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -316,33 +279,234 @@
   const selectedListEl = document.getElementById('selected-list');
   const itemCount = document.getElementById('item-count');
   const exportBtn = document.getElementById('export-btn');
+  const clearBtn = document.getElementById('clear-btn');
 
   let context = null;
   let selectedItems = [];
   let typingEl = null;
+  let engineerName = '';
+  let currentListId = null; // ID da lista carregada do histórico (para versionar)
+  let showArchived = false;
 
   function setStatus(text) { statusBar.textContent = text; }
   function scrollToBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
+  function clearList() {
+    if (!selectedItems.length) return;
+    if (!confirm('Limpar a lista atual?')) return;
+    selectedItems = [];
+    currentListId = null;
+    renderSidebar();
+  }
+
+  // ── Modal engenheiro ──────────────────────────────────────────────────────
+  function openEngineerModal() {
+    document.getElementById('engineer-modal').classList.remove('hidden');
+    setTimeout(() => document.getElementById('engineer-name-input').focus(), 100);
+  }
+
+  function closeEngineerModal() {
+    document.getElementById('engineer-modal').classList.add('hidden');
+  }
+
+  async function confirmExport() {
+    const name = document.getElementById('engineer-name-input').value.trim();
+    if (!name) { document.getElementById('engineer-name-input').focus(); return; }
+    engineerName = name;
+    closeEngineerModal();
+    await doExport();
+  }
+
+  // ── Histórico ─────────────────────────────────────────────────────────────
+  async function openHistory() {
+    document.getElementById('history-panel').classList.remove('hidden');
+    await loadHistory();
+  }
+
+  function closeHistory() {
+    document.getElementById('history-panel').classList.add('hidden');
+  }
+
+  function toggleArchived() {
+    showArchived = !showArchived;
+    const btn = document.getElementById('show-archived-btn');
+    btn.classList.toggle('active', showArchived);
+    btn.textContent = showArchived ? '✅ Arquivadas' : '📦 Arquivadas';
+    loadHistory();
+  }
+
+  async function loadHistory(filter = '') {
+    try {
+      const params = new URLSearchParams();
+      if (filter) params.set('engineer_name', filter);
+      if (showArchived) params.set('show_archived', 'true');
+      const res = await fetch(`/history?${params}`);
+      const data = await res.json();
+      renderHistory(data);
+    } catch (e) { console.error('Erro ao carregar histórico:', e); }
+  }
+
+  function filterHistory() {
+    const filter = document.getElementById('history-search-input').value.trim();
+    loadHistory(filter);
+  }
+
+  function renderHistory(items) {
+    const el = document.getElementById('history-list');
+    if (!items.length) {
+      el.innerHTML = '<div class="empty-state"><span>📋</span><p>Nenhuma lista encontrada.</p></div>';
+      return;
+    }
+    el.innerHTML = '';
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'history-item' + (item.archived ? ' archived' : '');
+
+      const date = new Date(item.created_at).toLocaleString('pt-BR');
+      const versionBadge = item.version > 1 ? `<span class="h-version">v${item.version}</span>` : '';
+
+      div.innerHTML = `
+        <div class="history-item-header">
+          <div class="history-item-info">
+            <div class="h-engineer">👷 ${item.engineer_name}${versionBadge}</div>
+            <div class="h-date">📅 ${date}</div>
+            <div class="h-summary">⚙️ ${item.total_services} serviço(s) · 📦 ${item.total_products} produto(s)</div>
+          </div>
+          <div class="history-item-actions">
+            <button class="h-btn" onclick="loadAndEdit('${item.id}', ${JSON.stringify(item.items).replace(/"/g, '&quot;')}, '${item.engineer_name}')">✏️ Editar</button>
+            <button class="h-btn ${item.archived ? 'success' : 'danger'}" onclick="toggleArchiveItem('${item.id}', ${item.archived})">
+              ${item.archived ? '↩️ Restaurar' : '📦 Arquivar'}
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Clique no info abre para visualizar
+      div.querySelector('.history-item-info').addEventListener('click', () => {
+        closeHistory();
+        selectedItems = item.items || [];
+        currentListId = item.id;
+        engineerName = item.engineer_name;
+        renderSidebar();
+        addBubble(`📋 Lista de ${item.engineer_name} carregada (${date}) — v${item.version}.`, 'ai', 'IA');
+      });
+
+      el.appendChild(div);
+    });
+  }
+
+  function loadAndEdit(id, items, name) {
+    closeHistory();
+    selectedItems = items || [];
+    currentListId = id;
+    engineerName = name;
+    renderSidebar();
+    addBubble(`✏️ Lista de ${name} carregada para edição. Exporte para salvar como nova versão.`, 'ai', 'IA');
+  }
+
+  async function toggleArchiveItem(id, isArchived) {
+    try {
+      const action = isArchived ? 'unarchive' : 'archive';
+      await fetch(`/history/${id}/${action}`, { method: 'PATCH' });
+      loadHistory(document.getElementById('history-search-input').value.trim());
+    } catch (e) { console.error('Erro ao arquivar:', e); }
+  }
+
+  // ── Export ────────────────────────────────────────────────────────────────
   function resetChat() {
     context = null;
     selectedItems = [];
+    currentListId = null;
+    engineerName = '';
     renderSidebar();
     messagesEl.innerHTML = '';
-    addBubble(
-      'Lista exportada com sucesso! Pode enviar uma nova lista de serviços quando quiser.',
-      'ai', 'IA'
-    );
+    addBubble('Lista exportada! Pode enviar uma nova lista quando quiser.', 'ai', 'IA');
     setStatus('Pronto. Descreva os serviços para começar.');
   }
 
+  async function doExport() {
+    const lines = [
+      '═══════════════════════════════════════',
+      '         LISTA DE MATERIAIS - OBRA',
+      `         Engenheiro: ${engineerName}`,
+      `         Gerado em: ${new Date().toLocaleString('pt-BR')}`,
+      '═══════════════════════════════════════',
+      '',
+    ];
+
+    let productIdx = 0;
+    let serviceIdx = 0;
+    const standalone = selectedItems.filter(i => i.type === 'product' && !i.parent_service);
+    const services = selectedItems.filter(i => i.type === 'service');
+
+    if (standalone.length > 0) {
+      lines.push('📦 MATERIAIS DIRETOS');
+      lines.push('─────────────────────────────────────');
+      standalone.forEach(item => {
+        productIdx++;
+        const qty = item.quantity ? ` — Qtd: ${item.quantity} ${item.unity || ''}` : '';
+        lines.push(`  ${productIdx}. ${item.description}${qty}`);
+      });
+    }
+
+    services.forEach(service => {
+      serviceIdx++;
+      lines.push(`\n⚙️ [SERVIÇO ${serviceIdx}] ${service.description}`);
+      lines.push('─────────────────────────────────────');
+      const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
+      if (children.length > 0) {
+        children.forEach(item => {
+          productIdx++;
+          const qty = item.quantity ? ` — Qtd: ${item.quantity} ${item.unity || ''}` : '';
+          lines.push(`  ${productIdx}. ${item.description}${qty}`);
+        });
+      } else {
+        lines.push('  (sem insumos selecionados)');
+      }
+    });
+
+    lines.push('\n═══════════════════════════════════════');
+    lines.push(`Serviços: ${services.length} | Produtos: ${productIdx}`);
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lista_materiais_${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    // Salva no banco — se tem currentListId, salva como nova versão
+    try {
+      await fetch('/save-list', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          engineer_name: engineerName,
+          items: selectedItems,
+          total_services: services.length,
+          total_products: productIdx,
+          parent_id: currentListId || null,
+        }),
+      });
+    } catch (e) { console.error('Erro ao salvar lista:', e); }
+
+    setTimeout(() => resetChat(), 500);
+  }
+
+  exportBtn.addEventListener('click', () => {
+    if (!selectedItems.length) return;
+    openEngineerModal();
+  });
+
+  // ── Chat functions ────────────────────────────────────────────────────────
   function showTyping() {
     const wrapper = document.createElement('div');
     wrapper.className = 'bubble ai';
-    const typing = document.createElement('div');
-    typing.className = 'typing';
-    typing.innerHTML = '<span></span><span></span><span></span>';
-    wrapper.appendChild(typing);
+    const t = document.createElement('div');
+    t.className = 'typing';
+    t.innerHTML = '<span></span><span></span><span></span>';
+    wrapper.appendChild(t);
     messagesEl.appendChild(wrapper);
     typingEl = wrapper;
     scrollToBottom();
@@ -370,26 +534,124 @@
     return wrapper;
   }
 
+  function addManualSearchInput(wrapper) {
+    const btn = document.createElement('button');
+    btn.className = 'manual-search-btn';
+    btn.textContent = '🔍 Buscar outro termo';
+    wrapper.appendChild(btn);
+
+    btn.addEventListener('click', () => {
+      btn.style.display = 'none';
+      const row = document.createElement('div');
+      row.className = 'manual-search-row';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Digite o termo de busca...';
+      const searchBtn = document.createElement('button');
+      searchBtn.textContent = 'Buscar';
+      row.appendChild(input);
+      row.appendChild(searchBtn);
+      wrapper.appendChild(row);
+      input.focus();
+
+      const doSearch = () => {
+        const term = input.value.trim();
+        if (!term) return;
+        row.style.opacity = '0.5';
+        row.style.pointerEvents = 'none';
+        addBubble(`🔍 Buscando: "${term}"`, 'user', 'Engenheiro');
+        sendMessage(`manual_search:${term}`, true);
+      };
+
+      searchBtn.addEventListener('click', doSearch);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSearch(); });
+    });
+  }
+
+  function addManualSearchBox(message) {
+    if (message) addBubble(message, 'ai', 'IA');
+    const row = document.createElement('div');
+    row.className = 'manual-search-row';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Tente outro termo...';
+    const btn = document.createElement('button');
+    btn.textContent = 'Buscar';
+    row.appendChild(input);
+    row.appendChild(btn);
+    messagesEl.appendChild(row);
+    scrollToBottom();
+    setTimeout(() => input.focus(), 100);
+
+    const doSearch = () => {
+      const term = input.value.trim();
+      if (!term) return;
+      row.style.opacity = '0.5';
+      row.style.pointerEvents = 'none';
+      addBubble(`🔍 Buscando: "${term}"`, 'user', 'Engenheiro');
+      sendMessage(`manual_search:${term}`, true);
+    };
+
+    btn.addEventListener('click', doSearch);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSearch(); });
+  }
+
+  function addQuantityInput(message, unity) {
+    addBubble(message, 'ai', 'IA');
+    const container = document.createElement('div');
+    container.className = 'quantity-container';
+    const label = document.createElement('div');
+    label.className = 'qty-label';
+    label.textContent = `Digite a quantidade${unity ? ` (${unity})` : ''}:`;
+    container.appendChild(label);
+    const row = document.createElement('div');
+    row.className = 'qty-input-row';
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = '1';
+    input.placeholder = 'Ex: 100';
+    row.appendChild(input);
+    if (unity) {
+      const badge = document.createElement('span');
+      badge.className = 'unit-badge';
+      badge.textContent = unity;
+      row.appendChild(badge);
+    }
+    const btn = document.createElement('button');
+    btn.textContent = 'Confirmar';
+    row.appendChild(btn);
+    container.appendChild(row);
+    messagesEl.appendChild(container);
+    scrollToBottom();
+
+    const confirm = () => {
+      const qty = input.value.trim() || '1';
+      container.style.pointerEvents = 'none';
+      container.style.opacity = '0.5';
+      addBubble(`✅ Quantidade: ${qty}${unity ? ' ' + unity : ''}`, 'user', 'Engenheiro');
+      sendMessage(qty, true);
+    };
+
+    btn.addEventListener('click', confirm);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirm(); });
+    setTimeout(() => input.focus(), 100);
+  }
+
   function addCategoryCards(categories, message) {
     if (message) addBubble(message, 'ai', 'IA');
-
     const wrapper = document.createElement('div');
     wrapper.className = 'cards-container';
-
     const label = document.createElement('div');
     label.className = 'cards-label';
     label.textContent = 'IA — Selecione a categoria';
     wrapper.appendChild(label);
-
-    categories.forEach((cat) => {
+    categories.forEach(cat => {
       const card = document.createElement('div');
       card.className = 'category-card';
-
       const title = document.createElement('div');
       title.className = 'card-title';
       title.textContent = cat.name;
       card.appendChild(title);
-
       card.addEventListener('click', () => {
         wrapper.querySelectorAll('.category-card').forEach(c => c.classList.add('card-selected'));
         card.classList.remove('card-selected');
@@ -397,101 +659,82 @@
         addBubble(`✅ Categoria: ${cat.name}`, 'user', 'Engenheiro');
         sendMessage(JSON.stringify({ type: 'category', description: cat.name }), true);
       });
-
       wrapper.appendChild(card);
     });
-
     messagesEl.appendChild(wrapper);
     scrollToBottom();
   }
 
   function addNextItemCards(options, message) {
     if (message) addBubble(message, 'ai', 'IA');
-
     const wrapper = document.createElement('div');
     wrapper.className = 'cards-container';
-
     const label = document.createElement('div');
     label.className = 'cards-label';
     label.textContent = 'IA — Próximo item';
     wrapper.appendChild(label);
-
-    options.forEach((opt) => {
+    options.forEach(opt => {
       const card = document.createElement('div');
       card.className = 'next-card';
-
       const title = document.createElement('div');
       title.className = 'card-title';
       title.textContent = opt.name;
       card.appendChild(title);
-
       card.addEventListener('click', () => {
         wrapper.querySelectorAll('.next-card').forEach(c => c.classList.add('card-selected'));
         card.classList.remove('card-selected');
         card.classList.add('card-selected-highlight');
         addBubble(`✅ ${opt.name}`, 'user', 'Engenheiro');
-        if (opt.name === 'Não, finalizar') {
-          sendMessage('nao', true);
+        
+        if (opt.name === 'Finalizar lista' || opt.name === 'Não, finalizar') {
+            sendMessage('nao', true);
         } else {
-          sendMessage('sim', true);
+            sendMessage('sim', true);
         }
-      });
-
+    });
       wrapper.appendChild(card);
     });
-
     messagesEl.appendChild(wrapper);
     scrollToBottom();
   }
 
   function addServiceCards(services, message) {
     if (message) addBubble(message, 'ai', 'IA');
-
     const wrapper = document.createElement('div');
     wrapper.className = 'cards-container';
-
     const label = document.createElement('div');
     label.className = 'cards-label';
     label.textContent = 'IA — Selecione o serviço';
     wrapper.appendChild(label);
-
     services.forEach((service, idx) => {
       const card = document.createElement('div');
       card.className = 'service-card';
-
       const num = document.createElement('div');
       num.className = 'card-number';
       num.textContent = `Opção ${idx + 1}`;
-
       const title = document.createElement('div');
       title.className = 'card-title';
       title.textContent = service.description;
-
       card.appendChild(num);
       card.appendChild(title);
-
       if (service.supplies && service.supplies.length > 0) {
         const supLabel = document.createElement('div');
         supLabel.className = 'supplies-label';
         supLabel.textContent = `Composição (${service.supplies.length} insumos)`;
-
         const tags = document.createElement('div');
         tags.className = 'supplies-tags';
-
         service.supplies.slice(0, 8).forEach(sup => {
           const tag = document.createElement('span');
           tag.className = 'supply-tag';
           tag.textContent = sup;
           tags.appendChild(tag);
         });
-
         if (service.supplies.length > 8) {
           const more = document.createElement('span');
           more.className = 'supply-tag';
           more.textContent = `+${service.supplies.length - 8} mais`;
           tags.appendChild(more);
         }
-
         card.appendChild(supLabel);
         card.appendChild(tags);
       } else {
@@ -500,7 +743,6 @@
         noSup.textContent = 'Sem composição cadastrada';
         card.appendChild(noSup);
       }
-
       card.addEventListener('click', () => {
         wrapper.querySelectorAll('.service-card').forEach(c => c.classList.add('card-selected'));
         card.classList.remove('card-selected');
@@ -508,50 +750,39 @@
         addBubble(`✅ Serviço: ${service.description}`, 'user', 'Engenheiro');
         sendMessage(String(idx + 1), true);
       });
-
       wrapper.appendChild(card);
     });
-
+    addManualSearchInput(wrapper);
     messagesEl.appendChild(wrapper);
     scrollToBottom();
   }
 
   function addProductCards(products, message) {
     if (message) addBubble(message, 'ai', 'IA');
-
     const wrapper = document.createElement('div');
     wrapper.className = 'cards-container';
-
     const label = document.createElement('div');
     label.className = 'cards-label';
     label.textContent = 'IA — Selecione o produto';
     wrapper.appendChild(label);
-
     products.forEach((product, idx) => {
       const card = document.createElement('div');
       card.className = 'product-card';
-
       const num = document.createElement('div');
       num.className = 'card-number';
       num.textContent = `Opção ${idx + 1}`;
-
       const title = document.createElement('div');
       title.className = 'card-title';
       title.textContent = product.description;
-
       card.appendChild(num);
       card.appendChild(title);
-
       const meta = document.createElement('div');
       meta.className = 'card-meta';
-
       if (product.brand) { const t = document.createElement('span'); t.className = 'meta-tag'; t.textContent = `🏷️ ${product.brand}`; meta.appendChild(t); }
       if (product.model) { const t = document.createElement('span'); t.className = 'meta-tag'; t.textContent = `Mod: ${product.model}`; meta.appendChild(t); }
       if (product.unity) { const t = document.createElement('span'); t.className = 'meta-tag'; t.textContent = `Un: ${product.unity}`; meta.appendChild(t); }
       if (product.code) { const t = document.createElement('span'); t.className = 'meta-tag'; t.textContent = `Cód: ${product.code}`; meta.appendChild(t); }
-
       if (meta.children.length > 0) card.appendChild(meta);
-
       card.addEventListener('click', () => {
         wrapper.querySelectorAll('.product-card').forEach(c => c.classList.add('card-selected'));
         card.classList.remove('card-selected');
@@ -559,200 +790,216 @@
         addBubble(`✅ Produto: ${product.description}`, 'user', 'Engenheiro');
         sendMessage(String(idx + 1), true);
       });
-
       wrapper.appendChild(card);
     });
-
+    addManualSearchInput(wrapper);
     messagesEl.appendChild(wrapper);
     scrollToBottom();
   }
 
   function renderSidebar() {
-    itemCount.textContent = selectedItems.length;
+      itemCount.textContent = selectedItems.length;
+      if (selectedItems.length === 0) {
+          selectedListEl.innerHTML = `<div class="empty-state"><span>📦</span><p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p></div>`;
+          exportBtn.disabled = true;
+          clearBtn.disabled = true;
+          return;
+      }
+      exportBtn.disabled = false;
+      clearBtn.disabled = false;
+      selectedListEl.innerHTML = '';
 
-    if (selectedItems.length === 0) {
-      selectedListEl.innerHTML = `<div class="empty-state"><span>📦</span><p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p></div>`;
-      exportBtn.disabled = true;
-      return;
-    }
+      const standalone = selectedItems.filter(i => i.type === 'product' && !i.parent_service);
+      const services = selectedItems.filter(i => i.type === 'service');
 
-    exportBtn.disabled = false;
-    selectedListEl.innerHTML = '';
+      const makeRemoveBtn = (item) => {
+          const btn = document.createElement('button');
+          btn.textContent = '✕';
+          btn.style.cssText = 'background:none;border:none;cursor:pointer;color:#94a3b8;font-size:0.9rem;padding:0 0 0 8px;flex-shrink:0;line-height:1;';
+          btn.title = 'Remover item';
+          btn.addEventListener('mouseover', () => btn.style.color = '#dc2626');
+          btn.addEventListener('mouseout', () => btn.style.color = '#94a3b8');
+          btn.addEventListener('click', () => {
+              const idx = selectedItems.indexOf(item);
+              if (idx > -1) {
+                  // Remove o item e seus filhos (insumos)
+                  if (item.type === 'service') {
+                      selectedItems = selectedItems.filter(i =>
+                          i !== item && i.parent_service !== item.description
+                      );
+                  } else {
+                      selectedItems = selectedItems.filter(i => i !== item);
+                  }
+                  renderSidebar();
+              }
+          });
+          return btn;
+      };
 
-    const standalone = selectedItems.filter(i => i.type === 'product' && !i.parent_service);
-    const services = selectedItems.filter(i => i.type === 'service');
+      standalone.forEach(item => {
+          const el = document.createElement('div');
+          el.className = 'selected-item';
+          el.style.display = 'flex';
+          el.style.alignItems = 'flex-start';
+          el.style.justifyContent = 'space-between';
 
-    standalone.forEach(item => {
-      const el = document.createElement('div');
-      el.className = 'selected-item';
-      el.innerHTML = `<div class="item-type">📦 Produto</div><div class="item-desc">${item.description}</div>`;
-      selectedListEl.appendChild(el);
-    });
+          const info = document.createElement('div');
+          info.style.flex = '1';
+          info.innerHTML = `
+              <div class="item-type">📦 Produto</div>
+              <div class="item-desc">${item.description}</div>
+              ${item.quantity ? `<div class="item-qty">Qtd: ${item.quantity} ${item.unity || ''}</div>` : ''}
+          `;
 
-    services.forEach(service => {
-      const serviceEl = document.createElement('div');
-      serviceEl.className = 'selected-item';
-      serviceEl.style.background = '#ecfeff';
-      serviceEl.style.borderColor = '#a5f3fc';
-      serviceEl.innerHTML = `<div class="item-type" style="color:#0e7490;">⚙️ Serviço</div><div class="item-desc" style="color:#0e7490;">${service.description}</div>`;
-      selectedListEl.appendChild(serviceEl);
-
-      const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
-      children.forEach(item => {
-        const el = document.createElement('div');
-        el.className = 'selected-item';
-        el.style.marginLeft = '12px';
-        el.style.borderLeft = '3px solid #a5f3fc';
-        el.innerHTML = `<div class="item-type">📦 Insumo</div><div class="item-desc">${item.description}</div>`;
-        selectedListEl.appendChild(el);
+          el.appendChild(info);
+          el.appendChild(makeRemoveBtn(item));
+          selectedListEl.appendChild(el);
       });
-    });
+
+      services.forEach(service => {
+          const serviceEl = document.createElement('div');
+          serviceEl.className = 'selected-item';
+          serviceEl.style.background = '#ecfeff';
+          serviceEl.style.borderColor = '#a5f3fc';
+          serviceEl.style.display = 'flex';
+          serviceEl.style.alignItems = 'flex-start';
+          serviceEl.style.justifyContent = 'space-between';
+
+          const info = document.createElement('div');
+          info.style.flex = '1';
+          info.innerHTML = `
+              <div class="item-type" style="color:#0e7490;">⚙️ Serviço</div>
+              <div class="item-desc" style="color:#0e7490;">${service.description}</div>
+          `;
+
+          serviceEl.appendChild(info);
+          serviceEl.appendChild(makeRemoveBtn(service));
+          selectedListEl.appendChild(serviceEl);
+
+          const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
+          children.forEach(item => {
+              const el = document.createElement('div');
+              el.className = 'selected-item';
+              el.style.marginLeft = '12px';
+              el.style.borderLeft = '3px solid #a5f3fc';
+              el.style.display = 'flex';
+              el.style.alignItems = 'flex-start';
+              el.style.justifyContent = 'space-between';
+
+              const info = document.createElement('div');
+              info.style.flex = '1';
+              info.innerHTML = `
+                  <div class="item-type">📦 Insumo</div>
+                  <div class="item-desc">${item.description}</div>
+                  ${item.quantity ? `<div class="item-qty">Qtd: ${item.quantity} ${item.unity || ''}</div>` : ''}
+              `;
+
+              el.appendChild(info);
+              el.appendChild(makeRemoveBtn(item));
+              selectedListEl.appendChild(el);
+          });
+      });
   }
 
   async function sendMessage(userInput, skipBubble = false) {
-    if (!skipBubble) addBubble(userInput, 'user', 'Engenheiro');
+      if (!skipBubble) addBubble(userInput, 'user', 'Engenheiro');
+      sendBtn.disabled = true;
+      setStatus('Agente processando...');
+      showTyping();
 
-    sendBtn.disabled = true;
-    setStatus('Agente processando...');
-    showTyping();
+      let payload = { user_input: userInput, context };
 
-    let payload = { user_input: userInput, context };
-    try {
-      const parsed = JSON.parse(userInput);
-      if (parsed.type === 'category') {
-        payload = { user_input: `confirm_category:${parsed.description}`, context };
-      }
-    } catch (_) {}
-
-    try {
-      const res = await fetch('/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      hideTyping();
-
-      if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
-
-      const data = await res.json();
-      context = data.context ?? null;
-
-      if (context?.state?.selected_items) {
-        selectedItems = context.state.selected_items;
-        renderSidebar();
+      // Se tem itens carregados do histórico, injeta no state para não perder
+      if (selectedItems.length > 0 && !context?.state?.selected_items?.length) {
+          payload = {
+              user_input: userInput,
+              context: {
+                  ...(context || {}),
+                  state: {
+                      ...(context?.state || {}),
+                      selected_items: selectedItems,
+                  }
+              }
+          };
       }
 
-      switch (data.tool) {
-        case 'selecionar_categoria':
-          addCategoryCards(data.data || [], data.message);
-          setStatus('Selecione a categoria do serviço.');
-          break;
+      try {
+          const parsed = JSON.parse(userInput);
+          if (parsed.type === 'category') {
+              payload = {
+                  user_input: `confirm_category:${parsed.description}`,
+                  context: payload.context,
+              };
+          }
+      } catch (_) {}
 
-        case 'proximo_item':
-          addNextItemCards(data.data || [], data.message);
-          setStatus('Confirme para continuar.');
-          break;
+      try {
+          const res = await fetch('/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+          });
+          hideTyping();
+          if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
+          const data = await res.json();
+          context = data.context ?? null;
 
-        case 'buscar_servico':
-          addServiceCards(data.data || [], data.message);
-          setStatus('Clique em um serviço para selecioná-lo.');
-          break;
+          // Atualiza itens do state mas mantém os que vieram do histórico
+          if (context?.state?.selected_items) {
+              selectedItems = context.state.selected_items;
+              renderSidebar();
+          }
 
-        case 'buscar_produto':
-          addProductCards(data.data || [], data.message);
-          setStatus('Clique em um produto para selecioná-lo.');
-          break;
-
-        case 'lista_completa':
-          selectedItems = data.data || [];
-          renderSidebar();
-          addBubble(data.message, 'ai', 'IA');
-          setStatus('Lista completa! Exporte para salvar.');
-          break;
-
-        case 'mensagem':
-          if (data.message) addBubble(data.message, 'ai', 'IA');
-          setStatus('Aguardando resposta...');
-          break;
-
-        case 'erro':
-          addBubble(data.message, 'ai', 'IA', true);
-          setStatus('Ocorreu um erro. Tente novamente.');
-          break;
-
-        default:
-          if (data.message) addBubble(data.message, 'ai', 'IA');
-          setStatus('Pronto.');
+          switch (data.tool) {
+              case 'selecionar_categoria':
+                  addCategoryCards(data.data || [], data.message);
+                  setStatus('Selecione a categoria do serviço.');
+                  break;
+              case 'proximo_item':
+                  addNextItemCards(data.data || [], data.message);
+                  setStatus('Confirme para continuar.');
+                  break;
+              case 'buscar_servico':
+                  addServiceCards(data.data || [], data.message);
+                  setStatus('Clique em um serviço para selecioná-lo.');
+                  break;
+              case 'buscar_produto':
+                  addProductCards(data.data || [], data.message);
+                  setStatus('Clique em um produto para selecioná-lo.');
+                  break;
+              case 'perguntar_quantidade':
+                  addQuantityInput(data.message, data.data?.[0]?.unity || '');
+                  setStatus('Digite a quantidade.');
+                  break;
+              case 'buscar_manual':
+                  addManualSearchBox(data.message);
+                  setStatus('Digite outro termo para buscar.');
+                  break;
+              case 'lista_completa':
+                  selectedItems = data.data || [];
+                  renderSidebar();
+                  addBubble(data.message, 'ai', 'IA');
+                  setStatus('Lista completa! Exporte para salvar.');
+                  break;
+              case 'mensagem':
+                  if (data.message) addBubble(data.message, 'ai', 'IA');
+                  setStatus('Aguardando resposta...');
+                  break;
+              case 'erro':
+                  addBubble(data.message, 'ai', 'IA', true);
+                  setStatus('Ocorreu um erro. Tente novamente.');
+                  break;
+              default:
+                  if (data.message) addBubble(data.message, 'ai', 'IA');
+                  setStatus('Pronto.');
+          }
+      } catch (err) {
+          hideTyping();
+          addBubble(`Erro de conexão: ${err.message}`, 'ai', 'IA', true);
+          setStatus('Erro de conexão com o servidor.');
       }
-
-    } catch (err) {
-      hideTyping();
-      addBubble(`Erro de conexão: ${err.message}`, 'ai', 'IA', true);
-      setStatus('Erro de conexão com o servidor.');
-    }
-
-    sendBtn.disabled = false;
+      sendBtn.disabled = false;
   }
-
-  exportBtn.addEventListener('click', () => {
-    if (!selectedItems.length) return;
-
-    const lines = [
-      '═══════════════════════════════════════',
-      '         LISTA DE MATERIAIS - OBRA',
-      `         Gerado em: ${new Date().toLocaleString('pt-BR')}`,
-      '═══════════════════════════════════════',
-      '',
-    ];
-
-    let productIdx = 0;
-    let serviceIdx = 0;
-
-    const standalone = selectedItems.filter(i => i.type === 'product' && !i.parent_service);
-    const services = selectedItems.filter(i => i.type === 'service');
-
-    if (standalone.length > 0) {
-      lines.push('📦 MATERIAIS DIRETOS');
-      lines.push('─────────────────────────────────────');
-      standalone.forEach(item => {
-        productIdx++;
-        lines.push(`  ${productIdx}. ${item.description}`);
-      });
-    }
-
-    services.forEach(service => {
-      serviceIdx++;
-      lines.push(`\n⚙️ [SERVIÇO ${serviceIdx}] ${service.description}`);
-      lines.push('─────────────────────────────────────');
-
-      const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
-      if (children.length > 0) {
-        children.forEach(item => {
-          productIdx++;
-          lines.push(`  ${productIdx}. ${item.description}`);
-        });
-      } else {
-        lines.push('  (sem insumos selecionados)');
-      }
-    });
-
-    lines.push('\n═══════════════════════════════════════');
-    lines.push(`Serviços: ${services.length} | Produtos: ${productIdx}`);
-
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `lista_materiais_${new Date().toISOString().slice(0,10)}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-
-    // Limpa o chat após exportar
-    setTimeout(() => {
-      resetChat();
-    }, 500);
-  });
 
   sendBtn.addEventListener('click', () => {
     const text = inputEl.value.trim();

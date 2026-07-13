@@ -9,9 +9,8 @@ class ProductRepository:
     def search(self, query: str, limit: int = 10) -> list[dict[str, Any]]:
         cursor = self.conn.cursor()
 
-        # Usa só as 2 primeiras palavras para busca mais ampla
         words = [w.strip() for w in query.strip().split() if len(w.strip()) > 1]
-        words = words[:2]  # máximo 2 palavras
+        words = words[:2]
 
         if not words:
             return []
@@ -19,13 +18,16 @@ class ProductRepository:
         conditions = " AND ".join(
             "unaccent(description) ILIKE unaccent(%s)" for _ in words
         )
-        params = [f"%{w}%" for w in words] + [limit]
+        params = [f"%{w}%" for w in words] + [f"{words[0]}%"] + [limit]
 
         cursor.execute(
             f"""
-            SELECT id, description, unity, brand, model, code
+            SELECT id, description, unity, brand, model, code,
+                CASE WHEN unaccent(description) ILIKE unaccent(%s)
+                    THEN 0 ELSE 1 END AS relevance
             FROM products
             WHERE {conditions}
+            ORDER BY relevance, description
             LIMIT %s
             """,
             params,
