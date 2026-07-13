@@ -405,11 +405,15 @@
   }
 
   async function toggleArchiveItem(id, isArchived) {
-    try {
-      const action = isArchived ? 'unarchive' : 'archive';
-      await fetch(`/history/${id}/${action}`, { method: 'PATCH' });
-      loadHistory(document.getElementById('history-search-input').value.trim());
-    } catch (e) { console.error('Erro ao arquivar:', e); }
+      try {
+          const action = isArchived ? 'unarchive' : 'archive';
+          await fetch(`/history/${id}/${action}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({}),
+          });
+          loadHistory(document.getElementById('history-search-input').value.trim());
+      } catch (e) { console.error('Erro ao arquivar:', e); }
   }
 
   // ── Export ────────────────────────────────────────────────────────────────
