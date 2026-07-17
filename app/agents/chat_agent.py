@@ -389,7 +389,14 @@ def chat(text: str, context: dict[str, Any] | None, db) -> StandardResponse:
             state["pending_service"] = None
             state["pending_product_is_service"] = False
             state["stage"] = STAGE_IDLE
+
+
+            if not state["pending_supplies"]:
+                return _ask_next(state, history)
+    
+
             return _process_current_item(state, history, db)
+
 
         item = {
             "description": product.get("description", ""),
