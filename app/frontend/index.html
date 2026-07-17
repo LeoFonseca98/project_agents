@@ -454,19 +454,20 @@
     }
 
     services.forEach(service => {
-      serviceIdx++;
-      lines.push(`\n⚙️ [SERVIÇO ${serviceIdx}] ${service.description}`);
-      lines.push('─────────────────────────────────────');
-      const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
-      if (children.length > 0) {
-        children.forEach(item => {
-          productIdx++;
-          const qty = item.quantity ? ` — Qtd: ${item.quantity} ${item.unity || ''}` : '';
-          lines.push(`  ${productIdx}. ${item.description}${qty}`);
-        });
-      } else {
-        lines.push('  (sem insumos selecionados)');
-      }
+        serviceIdx++;
+        const qty = service.quantity ? ` — Qtd: ${service.quantity} ${service.unity || 'UN'}` : '';
+        lines.push(`\n⚙️ [SERVIÇO ${serviceIdx}] ${service.description}${qty}`);
+        lines.push('─────────────────────────────────────');
+        const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
+        if (children.length > 0) {
+            children.forEach(item => {
+                productIdx++;
+                const qty = item.quantity ? ` — Qtd: ${item.quantity} ${item.unity || ''}` : '';
+                lines.push(`  ${productIdx}. ${item.description}${qty}`);
+            });
+        } else {
+            lines.push('  (sem insumos selecionados)');
+        }
     });
 
     lines.push('\n═══════════════════════════════════════');
@@ -802,108 +803,89 @@
   }
 
   function renderSidebar() {
-      itemCount.textContent = selectedItems.length;
-      if (selectedItems.length === 0) {
-          selectedListEl.innerHTML = `<div class="empty-state"><span>📦</span><p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p></div>`;
-          exportBtn.disabled = true;
-          clearBtn.disabled = true;
-          return;
-      }
-      exportBtn.disabled = false;
-      clearBtn.disabled = false;
-      selectedListEl.innerHTML = '';
+        itemCount.textContent = selectedItems.length;
+        if (selectedItems.length === 0) {
+            selectedListEl.innerHTML = `<div class="empty-state"><span>📦</span><p>Nenhum item selecionado.<br>Inicie uma conversa para montar sua lista.</p></div>`;
+            exportBtn.disabled = true;
+            clearBtn.disabled = true;
+            return;
+        }
+        exportBtn.disabled = false;
+        clearBtn.disabled = false;
+        selectedListEl.innerHTML = '';
 
-      const standalone = selectedItems.filter(i => i.type === 'product' && !i.parent_service);
-      const services = selectedItems.filter(i => i.type === 'service');
+        const standalone = selectedItems.filter(i => i.type === 'product' && !i.parent_service);
+        const services = selectedItems.filter(i => i.type === 'service');
 
-      const makeRemoveBtn = (item) => {
-          const btn = document.createElement('button');
-          btn.textContent = '✕';
-          btn.style.cssText = 'background:none;border:none;cursor:pointer;color:#94a3b8;font-size:0.9rem;padding:0 0 0 8px;flex-shrink:0;line-height:1;';
-          btn.title = 'Remover item';
-          btn.addEventListener('mouseover', () => btn.style.color = '#dc2626');
-          btn.addEventListener('mouseout', () => btn.style.color = '#94a3b8');
-          btn.addEventListener('click', () => {
-              const idx = selectedItems.indexOf(item);
-              if (idx > -1) {
-                  // Remove o item e seus filhos (insumos)
-                  if (item.type === 'service') {
-                      selectedItems = selectedItems.filter(i =>
-                          i !== item && i.parent_service !== item.description
-                      );
-                  } else {
-                      selectedItems = selectedItems.filter(i => i !== item);
-                  }
-                  renderSidebar();
-              }
-          });
-          return btn;
-      };
+        const makeRemoveBtn = (item) => {
+            const btn = document.createElement('button');
+            btn.textContent = '✕';
+            btn.style.cssText = 'background:none;border:none;cursor:pointer;color:#94a3b8;font-size:0.9rem;padding:0 0 0 8px;flex-shrink:0;line-height:1;';
+            btn.title = 'Remover item';
+            btn.addEventListener('mouseover', () => btn.style.color = '#dc2626');
+            btn.addEventListener('mouseout', () => btn.style.color = '#94a3b8');
+            btn.addEventListener('click', () => {
+                if (item.type === 'service') {
+                    selectedItems = selectedItems.filter(i =>
+                        i !== item && i.parent_service !== item.description
+                    );
+                } else {
+                    selectedItems = selectedItems.filter(i => i !== item);
+                }
+                renderSidebar();
+            });
+            return btn;
+        };
 
-      standalone.forEach(item => {
-          const el = document.createElement('div');
-          el.className = 'selected-item';
-          el.style.display = 'flex';
-          el.style.alignItems = 'flex-start';
-          el.style.justifyContent = 'space-between';
+        standalone.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'selected-item';
+            el.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;';
+            const info = document.createElement('div');
+            info.style.flex = '1';
+            info.innerHTML = `
+                <div class="item-type">📦 Produto</div>
+                <div class="item-desc">${item.description}</div>
+                ${item.quantity ? `<div class="item-qty">Qtd: ${item.quantity} ${item.unity || ''}</div>` : ''}
+            `;
+            el.appendChild(info);
+            el.appendChild(makeRemoveBtn(item));
+            selectedListEl.appendChild(el);
+        });
 
-          const info = document.createElement('div');
-          info.style.flex = '1';
-          info.innerHTML = `
-              <div class="item-type">📦 Produto</div>
-              <div class="item-desc">${item.description}</div>
-              ${item.quantity ? `<div class="item-qty">Qtd: ${item.quantity} ${item.unity || ''}</div>` : ''}
-          `;
+        services.forEach(service => {
+            const serviceEl = document.createElement('div');
+            serviceEl.className = 'selected-item';
+            serviceEl.style.cssText = 'background:#ecfeff;border-color:#a5f3fc;display:flex;align-items:flex-start;justify-content:space-between;';
+            const info = document.createElement('div');
+            info.style.flex = '1';
+            info.innerHTML = `
+                <div class="item-type" style="color:#0e7490;">⚙️ Serviço</div>
+                <div class="item-desc" style="color:#0e7490;">${service.description}</div>
+                ${service.quantity ? `<div class="item-qty" style="color:#0e7490;">Qtd: ${service.quantity} ${service.unity || 'UN'}</div>` : ''}
+            `;
+            serviceEl.appendChild(info);
+            serviceEl.appendChild(makeRemoveBtn(service));
+            selectedListEl.appendChild(serviceEl);
 
-          el.appendChild(info);
-          el.appendChild(makeRemoveBtn(item));
-          selectedListEl.appendChild(el);
-      });
-
-      services.forEach(service => {
-          const serviceEl = document.createElement('div');
-          serviceEl.className = 'selected-item';
-          serviceEl.style.background = '#ecfeff';
-          serviceEl.style.borderColor = '#a5f3fc';
-          serviceEl.style.display = 'flex';
-          serviceEl.style.alignItems = 'flex-start';
-          serviceEl.style.justifyContent = 'space-between';
-
-          const info = document.createElement('div');
-          info.style.flex = '1';
-          info.innerHTML = `
-              <div class="item-type" style="color:#0e7490;">⚙️ Serviço</div>
-              <div class="item-desc" style="color:#0e7490;">${service.description}</div>
-          `;
-
-          serviceEl.appendChild(info);
-          serviceEl.appendChild(makeRemoveBtn(service));
-          selectedListEl.appendChild(serviceEl);
-
-          const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
-          children.forEach(item => {
-              const el = document.createElement('div');
-              el.className = 'selected-item';
-              el.style.marginLeft = '12px';
-              el.style.borderLeft = '3px solid #a5f3fc';
-              el.style.display = 'flex';
-              el.style.alignItems = 'flex-start';
-              el.style.justifyContent = 'space-between';
-
-              const info = document.createElement('div');
-              info.style.flex = '1';
-              info.innerHTML = `
-                  <div class="item-type">📦 Insumo</div>
-                  <div class="item-desc">${item.description}</div>
-                  ${item.quantity ? `<div class="item-qty">Qtd: ${item.quantity} ${item.unity || ''}</div>` : ''}
-              `;
-
-              el.appendChild(info);
-              el.appendChild(makeRemoveBtn(item));
-              selectedListEl.appendChild(el);
-          });
-      });
-  }
+            const children = selectedItems.filter(i => i.type === 'product' && i.parent_service === service.description);
+            children.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'selected-item';
+                el.style.cssText = 'margin-left:12px;border-left:3px solid #a5f3fc;display:flex;align-items:flex-start;justify-content:space-between;';
+                const info = document.createElement('div');
+                info.style.flex = '1';
+                info.innerHTML = `
+                    <div class="item-type">📦 Insumo</div>
+                    <div class="item-desc">${item.description}</div>
+                    ${item.quantity ? `<div class="item-qty">Qtd: ${item.quantity} ${item.unity || ''}</div>` : ''}
+                `;
+                el.appendChild(info);
+                el.appendChild(makeRemoveBtn(item));
+                selectedListEl.appendChild(el);
+            });
+        });
+    }
 
   async function sendMessage(userInput, skipBubble = false) {
       if (!skipBubble) addBubble(userInput, 'user', 'Engenheiro');

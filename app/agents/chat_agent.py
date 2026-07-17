@@ -33,6 +33,7 @@ CATEGORIES = [
 STAGE_IDLE = "idle"
 STAGE_WAITING_CATEGORY = "waiting_category"
 STAGE_WAITING_SERVICE = "waiting_service"
+STAGE_WAITING_SERVICE_QUANTITY = "waiting_service_quantity"
 STAGE_WAITING_SUPPLY = "waiting_supply"
 STAGE_WAITING_PRODUCT = "waiting_product"
 STAGE_WAITING_QUANTITY = "waiting_quantity"
@@ -235,7 +236,6 @@ def _ask_next(state: dict, history: list) -> StandardResponse:
 
     if not pending:
         selected = state.get("selected_items", [])
-        # Se está editando, não finaliza — pergunta se quer adicionar mais
         return StandardResponse(
             status="success",
             tool="proximo_item",
@@ -283,6 +283,7 @@ def chat(text: str, context: dict[str, Any] | None, db) -> StandardResponse:
         "total_items": 0,
         "category_attempts": 0,
         "pending_product": None,
+        "pending_service": None,
         "manual_search_type": "product",
         "manual_search_prev_stage": STAGE_WAITING_PRODUCT,
     })
@@ -343,7 +344,6 @@ def chat(text: str, context: dict[str, Any] | None, db) -> StandardResponse:
     if stage == STAGE_WAITING_NEXT:
         if "sim" in text.lower() or text.strip() == "1" or "adicionar" in text.lower():
             state["stage"] = STAGE_IDLE
-            # Se não tem pendentes, aguarda nova entrada do engenheiro
             if not state.get("pending_items"):
                 return StandardResponse(
                     status="success",
@@ -367,7 +367,29 @@ def chat(text: str, context: dict[str, Any] | None, db) -> StandardResponse:
     if stage == STAGE_WAITING_QUANTITY:
         quantity = text.strip() or "1"
         product = state.get("pending_product", {})
-        is_supply = bool(state.get("pending_supplies"))
+        is_supply = bool(state.get("pending_supplies")) and not state.get("pending_product_is_service")
+        is_service = state.get("pending_product_is_service", False)
+
+        if is_service:
+            chosen = state.get("pending_service", {})
+            item = {
+                "description": chosen["description"],
+                "type": "service",
+                "status": "confirmado",
+                "parent_service": None,
+                "quantity": quantity,
+                "unity": "UN",
+            }
+            state["selected_items"].append(item)
+            state["current_service"] = chosen["description"]
+            state["pending_supplies"] = list(chosen.get("supplies", []))
+            pending = state.get("pending_items", [])
+            state["pending_items"] = pending[1:] if pending else []
+            state["pending_product"] = None
+            state["pending_service"] = None
+            state["pending_product_is_service"] = False
+            state["stage"] = STAGE_IDLE
+            return _process_current_item(state, history, db)
 
         item = {
             "description": product.get("description", ""),
@@ -381,6 +403,7 @@ def chat(text: str, context: dict[str, Any] | None, db) -> StandardResponse:
         }
         state["selected_items"].append(item)
         state["pending_product"] = None
+        state["pending_product_is_service"] = False
 
         if is_supply:
             pending_supplies = state.get("pending_supplies", [])
@@ -402,25 +425,27 @@ def chat(text: str, context: dict[str, Any] | None, db) -> StandardResponse:
         state["stage"] = STAGE_IDLE
         return _process_current_item(state, history, db)
 
-    # ── Seleção de serviço ────────────────────────────────────────────────────
+    # ── Seleção de serviço → pede quantidade ─────────────────────────────────
     if stage == STAGE_WAITING_SERVICE and text.strip().isdigit():
         idx = int(text.strip()) - 1
         services = state.get("last_services", [])
 
         if 0 <= idx < len(services):
             chosen = services[idx]
-            state["selected_items"].append({
+            state["pending_service"] = chosen
+            state["pending_product_is_service"] = True
+            state["pending_product"] = {
                 "description": chosen["description"],
-                "type": "service",
-                "status": "confirmado",
-                "parent_service": None,
-                "quantity": "1",
-            })
-            state["current_service"] = chosen["description"]
-            state["pending_supplies"] = list(chosen.get("supplies", []))
-            pending = state.get("pending_items", [])
-            state["pending_items"] = pending[1:] if pending else []
-            state["stage"] = STAGE_IDLE
+                "unity": "UN",
+            }
+            state["stage"] = STAGE_WAITING_QUANTITY
+            return StandardResponse(
+                status="success",
+                tool="perguntar_quantidade",
+                message=f"Qual a quantidade do serviço '{chosen['description']}'?",
+                data=[{"unity": "UN"}],
+                context={"history": history, "state": state},
+            )
 
         return _process_current_item(state, history, db)
 
@@ -446,11 +471,10 @@ def chat(text: str, context: dict[str, Any] | None, db) -> StandardResponse:
 
         return _process_current_item(state, history, db)
 
-    # ── Nova lista ou adição de itens ────────────────────────────────────────
+    # ── Nova lista ou adição de itens ─────────────────────────────────────────
     items = _classify_items(text)
     state["pending_items"] = items
     state["total_items"] = len(items)
-    # Mantém os itens existentes — não zera
     state["pending_supplies"] = []
     state["current_service"] = ""
     state["current_supply"] = ""
@@ -458,5 +482,7 @@ def chat(text: str, context: dict[str, Any] | None, db) -> StandardResponse:
     state["stage"] = STAGE_IDLE
     state["category_attempts"] = 0
     state["pending_product"] = None
+    state["pending_service"] = None
+    state["pending_product_is_service"] = False
 
     return _process_current_item(state, history, db)
