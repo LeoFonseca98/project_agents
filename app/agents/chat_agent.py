@@ -48,18 +48,22 @@ def _classify_items(text: str) -> list[dict]:
             messages=[{
                 "role": "user",
                 "content": (
-                    "Analise esta lista de itens de obra e classifique cada um.\n"
-                    "IGNORE quantidades e unidades (100m, duas, 3 unidades, etc) — foque no ITEM.\n"
-                    "SERVIÇO = ação a executar (instalar, assentar, pintar, demolir, executar, etc)\n"
-                    "PRODUTO = material ou ferramenta (tinta, cabo, lixa, luminária, tomada, eletroduto, etc)\n\n"
-                    "EXEMPLOS:\n"
-                    "- 'duas tomadas' → product (name: 'tomada')\n"
-                    "- '100m de eletroduto' → product (name: 'eletroduto')\n"
-                    "- 'duas luminárias' → product (name: 'luminária')\n"
-                    "- 'instalação de tomada' → service (name: 'instalação de tomada')\n\n"
-                    f"Lista: {text}\n\n"
-                    "Retorne APENAS JSON sem markdown:\n"
-                    "{\"items\": [{\"name\": \"nome sem quantidade\", \"type\": \"service ou product\"}]}"
+                    "Você é um engenheiro orçamentista sênior de construção civil.\n\n"
+                    "Sua tarefa é classificar cada item da lista fornecida como 'product' ou 'service'.\n\n"
+                    "REGRAS DE CLASSIFICAÇÃO:\n"
+                    "1. PRODUTO ('product'): Insumos físicos, materiais, peças, ferramentas e equipamentos comprados/estocados.\n"
+                    "   - Ex: cabo, tomada, lata de tinta, tubo, parafuso, cimento, tijolo.\n"
+                    "2. SERVIÇO ('service'): Mão de obra, ações executadas, etapas de obra e contratos integrados.\n"
+                    "   - Ex: instalar, assentar, pintar, demolir, escavação, montagem.\n"
+                    "   - IMPORTANTE: Termos compostos como 'Fornecimento e instalação' ou 'Execução de...' DEVEM ser classificados como 'service'.\n"
+                    "   - IMPORTANTE: Fases de obra sem verbo explícito (ex: 'Alvenaria', 'Pintura acrílica') são etapas/serviços -> 'service'.\n\n"
+                    "EXEMPLOS DE ENTRADA E SAÍDA:\n"
+                    "Entrada: Tinta acrílica fosca 18L\nSaída: product\n"
+                    "Entrada: Pintura acrílica sobre parede\nSaída: service\n"
+                    "Entrada: Fornecimento e assentamento de piso porcelanato\nSaída: service\n\n"
+                    f"LISTA PARA CLASSIFICAR:\n{text}\n\n"
+                    "Retorne APENAS o JSON no formato:\n"
+                    "{\"items\": [{\"name\": \"nome exato do item\", \"type\": \"product | service\"}]}"
                 )
             }],
             temperature=0,

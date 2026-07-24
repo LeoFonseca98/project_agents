@@ -10,24 +10,42 @@ class ProductRepository:
         cursor = self.conn.cursor()
 
         words = [w.strip() for w in query.strip().split() if len(w.strip()) > 1]
-        words = words[:2]
 
         if not words:
             return []
 
-        conditions = " AND ".join(
-            "unaccent(description) ILIKE unaccent(%s)" for _ in words
+        main_word = words[0]
+        extra_words = words[1:] if len(words) > 1 else []
+
+        # Monta relevância extra só se tiver palavras adicionais
+        if extra_words:
+            extra_relevance = ", " + " + ".join(
+                f"CASE WHEN unaccent(description) ILIKE unaccent(%s) THEN 1 ELSE 0 END"
+                for _ in extra_words
+            ) + " as extra_score"
+            extra_params_relevance = [f"%{w}%" for w in extra_words]
+            order_extra = ", extra_score DESC"
+        else:
+            extra_relevance = ""
+            extra_params_relevance = []
+            order_extra = ""
+
+        params = (
+            [f"{main_word}%"] +
+            extra_params_relevance +
+            [f"%{main_word}%"] +
+            [limit]
         )
-        params = [f"%{w}%" for w in words] + [f"{words[0]}%"] + [limit]
 
         cursor.execute(
             f"""
             SELECT id, description, unity, brand, model, code,
                 CASE WHEN unaccent(description) ILIKE unaccent(%s)
-                    THEN 0 ELSE 1 END AS relevance
+                    THEN 0 ELSE 1 END as starts_with
+                {extra_relevance}
             FROM products
-            WHERE {conditions}
-            ORDER BY relevance, description
+            WHERE unaccent(description) ILIKE unaccent(%s)
+            ORDER BY starts_with ASC{order_extra}, description ASC
             LIMIT %s
             """,
             params,
@@ -45,6 +63,9 @@ class ProductRepository:
             }
             for row in rows
         ]
+
+
+
 
     def find_by_id(self, product_id: str) -> dict[str, Any] | None:
         cursor = self.conn.cursor()
